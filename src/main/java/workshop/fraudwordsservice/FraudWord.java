@@ -11,4 +11,11 @@ public class FraudWord {
     public String getWord() {
         return word;
     }
+
+    @Override
+    public String toString() {
+        return "FraudWord{" +
+                "word='" + word + '\'' +
+                '}';
+    }
 }

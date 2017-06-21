@@ -13,4 +13,14 @@ public class ClassifiedAd {
         this.title = title;
         this.description = description;
     }
+
+    @Override
+    public String toString() {
+        return "ClassifiedAd{" +
+                "adId=" + adId +
+                ", userId=" + userId +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }

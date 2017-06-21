@@ -16,6 +16,6 @@ public class FraudWordServiceImpl implements FraudWordService {
     }
 
     private List<FraudWord> allWords() {
-        return List.of("westernunion, advance, nigeria, wiretransfer").map(FraudWord::new);
+        return List.of("westernunion", "advance", "nigeria", "wiretransfer").map(FraudWord::new);
     }
 }

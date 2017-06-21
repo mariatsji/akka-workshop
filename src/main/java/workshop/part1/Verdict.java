@@ -14,4 +14,13 @@ public class Verdict {
         this.fraudWords = fraudWords;
         this.verdictStatus = verdictStatus;
     }
+
+    @Override
+    public String toString() {
+        return "Verdict{" +
+                "adId=" + adId +
+                ", fraudWords=" + fraudWords +
+                ", verdictStatus=" + verdictStatus +
+                '}';
+    }
 }
