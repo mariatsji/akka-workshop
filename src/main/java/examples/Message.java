@@ -1,4 +1,4 @@
-package workshop.examples;
+package examples;
 
 public class Message {
 
