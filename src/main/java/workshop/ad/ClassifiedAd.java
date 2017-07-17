@@ -1,14 +1,16 @@
 package workshop.ad;
 
+import java.util.Random;
+
 public class ClassifiedAd {
 
-    public final Long adId;
-    public final Long userId;
+    public final Integer adId;
+    public final Integer userId;
     public final String title;
     public final String description;
 
-    public ClassifiedAd(Long adId, Long userId, String title, String description) {
-        this.adId = adId;
+    public ClassifiedAd(Integer userId, String title, String description) {
+        this.adId = new Random().nextInt();
         this.userId = userId;
         this.title = title;
         this.description = description;

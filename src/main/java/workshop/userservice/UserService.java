@@ -1,10 +1,13 @@
 package workshop.userservice;
 
-import javaslang.control.Either;
-import javaslang.control.Option;
+public class UserService {
 
-public interface UserService {
-
-    Either<Throwable, Option<UserCriminalRecord>> vettUser(Long loginId);
+    public UserCriminalRecord vettUser(Integer loginId) {
+        if (loginId < 100000) {
+            return UserCriminalRecord.GOOD;
+        } else {
+            return UserCriminalRecord.EVIL;
+        }
+    }
 
 }
