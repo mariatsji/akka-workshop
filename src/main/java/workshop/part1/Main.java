@@ -1,19 +1,26 @@
 package workshop.part1;
 
+import java.util.concurrent.TimeUnit;
+
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
-import workshop.ad.ClassifiedAd;
+import akka.japi.pf.ReceiveBuilder;
+import scala.concurrent.duration.Duration;
+import workshop.ad.Ad;
 import workshop.fraudwordsservice.FraudWordService;
 import workshop.userservice.UserService;
 
-public class Main extends AbstractActor {
+public class Main {
 
     public static void main(String[] args) {
         ActorSystem system = ActorSystem.create("MonolithActorSystem");
-        final ActorRef vettingActor = system.actorOf(Props.create(VettingActor.class,
-            () -> new VettingActor(new UserService(), new FraudWordService())), "vettingActor");
+
+        ActorRef numVettedAdsActor = system.actorOf(Props.create(NumVettedAdsActor.class, NumVettedAdsActor::new));
+
+        ActorRef vettingActor = system.actorOf(Props.create(VettingActor.class,
+            () -> new VettingActor(new UserService(), new FraudWordService(), numVettedAdsActor, Duration.create(1, TimeUnit.SECONDS))), "vettingActor");
 
         vettingActor.tell(createGoodAd(), ActorRef.noSender());
         vettingActor.tell(createBadAd(), ActorRef.noSender());
@@ -21,16 +28,23 @@ public class Main extends AbstractActor {
         system.terminate();
     }
 
-    private static ClassifiedAd createGoodAd() {
-        return new ClassifiedAd(456, "fin sofa", "pent brukt - med blomstermønster");
+    private static Ad createGoodAd() {
+        return new Ad(456, "fin sofa", "pent brukt - med blomstermønster");
     }
 
-    private static ClassifiedAd createBadAd() {
-        return new ClassifiedAd(200001, "cute dog", "money in advance to nigeria via westernunion, please");
+    private static Ad createBadAd() {
+        return new Ad(200001, "cute dog", "money in advance to nigeria via westernunion, please");
     }
 
-    @Override
-    public Receive createReceive() {
-        return null;
+
+    static class NumVettedAdsActor extends AbstractActor {
+        @Override
+        public Receive createReceive() {
+            return ReceiveBuilder.create()
+                .match(VettingActor.NumVettedAds.class, m -> {
+                    System.out.println("Num vetted ads: " + m.numVettedAds);
+                })
+                .build();
+        }
     }
 }
