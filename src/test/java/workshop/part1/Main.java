@@ -14,7 +14,7 @@ import workshop.userservice.UserService;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         ActorSystem system = ActorSystem.create("MonolithActorSystem");
 
         ActorRef numVettedAdsActor = system.actorOf(Props.create(NumVettedAdsActor.class, NumVettedAdsActor::new));
@@ -22,9 +22,11 @@ public class Main {
         ActorRef vettingActor = system.actorOf(Props.create(VettingActor.class,
             () -> new VettingActor(new UserService(), new FraudWordService(), numVettedAdsActor, Duration.create(1, TimeUnit.SECONDS))), "vettingActor");
 
+        Thread.sleep(2000);
         vettingActor.tell(createGoodAd(), ActorRef.noSender());
         vettingActor.tell(createBadAd(), ActorRef.noSender());
 
+        Thread.sleep(3000);
         system.terminate();
     }
 
