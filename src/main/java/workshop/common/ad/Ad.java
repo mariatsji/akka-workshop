@@ -29,14 +29,10 @@ public class Ad {
 
 
     public static Verdict toVerdictStatus(UserCriminalRecord record, List<FraudWord> fraudWords) {
-        return new Verdict(fraudWords, toVerdictStatus(fraudWords, record));
-    }
-
-    public static VerdictStatus toVerdictStatus(List<FraudWord> fraudWords, UserCriminalRecord record) {
         if (record == UserCriminalRecord.GOOD && fraudWords.isEmpty()) {
-            return VerdictStatus.GOOD;
+            return new Verdict(fraudWords, VerdictStatus.GOOD);
         } else {
-            return VerdictStatus.BAD;
+            return new Verdict(fraudWords, VerdictStatus.BAD);
         }
     }
 

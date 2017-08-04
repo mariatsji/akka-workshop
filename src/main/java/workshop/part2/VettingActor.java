@@ -5,7 +5,9 @@ import akka.actor.ActorRef;
 import akka.japi.pf.ReceiveBuilder;
 import scala.concurrent.duration.FiniteDuration;
 import workshop.common.ad.Ad;
+import workshop.part2.FraudWordActor.ExamineWords;
 import workshop.part2.FraudWordActor.ExamineWordsResult;
+import workshop.part2.UserActor.CheckUser;
 import workshop.part2.UserActor.CheckUserResult;
 
 import static workshop.common.ad.Ad.toVerdictStatus;
@@ -14,10 +16,10 @@ public class VettingActor extends AbstractActor {
 
     private final ActorRef userActor;
     private final ActorRef fraudWordActor;
+    private final FiniteDuration timeoutVetting;
     private CheckUserResult checkUserResult;
     private ExamineWordsResult examineWordsResult;
     private ActorRef sender;
-    private FiniteDuration timeoutVetting;
 
     VettingActor(ActorRef userActor, ActorRef fraudWordActor, FiniteDuration timeoutVetting) {
         this.userActor = userActor;
@@ -29,8 +31,8 @@ public class VettingActor extends AbstractActor {
     public Receive createReceive() {
         return ReceiveBuilder.create()
             .match(Ad.class, ad -> {
-                userActor.tell(new UserActor.CheckUser(ad.userId), self());
-                fraudWordActor.tell(new FraudWordActor.ExamineWords(ad.toAdWords()), self());
+                userActor.tell(new CheckUser(ad.userId), self());
+                fraudWordActor.tell(new ExamineWords(ad.toAdWords()), self());
 
                 sender = sender();
                 scheduleTimeout(timeoutVetting);
