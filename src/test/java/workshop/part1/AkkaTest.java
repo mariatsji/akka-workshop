@@ -2,23 +2,18 @@ package workshop.part1;
 
 import java.util.concurrent.TimeUnit;
 
+import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.testkit.TestKit;
 import akka.testkit.TestProbe;
 import org.junit.After;
-import org.junit.Before;
 import scala.concurrent.duration.Duration;
+import scala.concurrent.duration.FiniteDuration;
 
 public abstract class AkkaTest {
 
-    ActorSystem system;
-    TestProbe sender;
-
-    @Before
-    public void setup() {
-        system = ActorSystem.create();
-        sender = TestProbe.apply(system);
-    }
+    protected ActorSystem system = ActorSystem.create();
+    protected TestProbe sender = TestProbe.apply(system);
 
     @After
     public void teardown() {
@@ -26,4 +21,7 @@ public abstract class AkkaTest {
         TestKit.shutdownActorSystem(system, Duration.create(5, TimeUnit.SECONDS), verifySystemShutdown);
     }
 
+    protected void schedule(FiniteDuration delay, ActorRef receiver, Object msg) {
+        system.scheduler().scheduleOnce(delay, receiver, msg, system.dispatcher(), sender.ref());
+    }
 }

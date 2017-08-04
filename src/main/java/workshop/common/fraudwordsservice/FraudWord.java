@@ -1,4 +1,4 @@
-package workshop.fraudwordsservice;
+package workshop.common.fraudwordsservice;
 
 public class FraudWord {
 

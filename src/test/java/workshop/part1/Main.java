@@ -8,9 +8,9 @@ import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.japi.pf.ReceiveBuilder;
 import scala.concurrent.duration.Duration;
-import workshop.ad.Ad;
-import workshop.fraudwordsservice.FraudWordService;
-import workshop.userservice.UserService;
+import workshop.common.ad.Ad;
+import workshop.common.fraudwordsservice.FraudWordService;
+import workshop.common.userservice.UserService;
 
 public class Main {
 

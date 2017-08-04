@@ -5,11 +5,13 @@ import akka.actor.ActorRef;
 import akka.japi.pf.ReceiveBuilder;
 import javaslang.collection.List;
 import scala.concurrent.duration.FiniteDuration;
-import workshop.ad.Ad;
-import workshop.fraudwordsservice.FraudWord;
-import workshop.fraudwordsservice.FraudWordService;
-import workshop.userservice.UserCriminalRecord;
-import workshop.userservice.UserService;
+import workshop.common.ad.Ad;
+import workshop.common.fraudwordsservice.FraudWord;
+import workshop.common.fraudwordsservice.FraudWordService;
+import workshop.common.userservice.UserCriminalRecord;
+import workshop.common.userservice.UserService;
+
+import static workshop.common.ad.Ad.toVerdictStatus;
 
 public class VettingActor extends AbstractActor {
 
@@ -49,22 +51,9 @@ public class VettingActor extends AbstractActor {
 
     private Verdict performVetting(Ad ad) {
         UserCriminalRecord record = userService.vettUser(ad.userId);
-        List<FraudWord> fraudWords = fraudWordService.examineWords(toAdWords(ad));
+        List<FraudWord> fraudWords = fraudWordService.examineWords(ad.toAdWords());
 
-        return new Verdict(ad.adId, fraudWords, toVerdictStatus(fraudWords, record));
-    }
-
-    private static List<String> toAdWords(Ad ad) {
-        return List.of(ad.title.split("\\W"))
-            .push(ad.description.split("\\W"));
-    }
-
-    private static VerdictStatus toVerdictStatus(List<FraudWord> fraudWords, UserCriminalRecord record) {
-        if (record == UserCriminalRecord.GOOD && fraudWords.isEmpty()) {
-            return VerdictStatus.GOOD;
-        } else {
-            return VerdictStatus.BAD;
-        }
+        return toVerdictStatus(record, fraudWords);
     }
 
     private void scheduleReportNumVettedAds() {

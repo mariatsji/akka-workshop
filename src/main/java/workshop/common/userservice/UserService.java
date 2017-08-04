@@ -1,4 +1,4 @@
-package workshop.userservice;
+package workshop.common.userservice;
 
 public class UserService {
 

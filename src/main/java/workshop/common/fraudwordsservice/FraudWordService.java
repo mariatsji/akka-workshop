@@ -1,4 +1,4 @@
-package workshop.fraudwordsservice;
+package workshop.common.fraudwordsservice;
 
 import javaslang.collection.List;
 
