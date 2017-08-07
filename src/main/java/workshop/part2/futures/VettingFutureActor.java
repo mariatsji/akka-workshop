@@ -1,4 +1,4 @@
-package workshop.part2;
+package workshop.part2.futures;
 
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;

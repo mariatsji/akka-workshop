@@ -1,4 +1,4 @@
-package workshop.part2;
+package workshop.part2.subactor;
 
 import java.util.concurrent.TimeUnit;
 

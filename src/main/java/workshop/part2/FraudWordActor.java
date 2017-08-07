@@ -23,16 +23,16 @@ public class FraudWordActor extends AbstractActor {
             .build();
     }
 
-    static class ExamineWords {
-        final List<String> words;
+    public static class ExamineWords {
+        public final List<String> words;
 
         public ExamineWords(List<String> words) {
             this.words = words;
         }
     }
 
-    static class ExamineWordsResult {
-        final List<FraudWord> fraudWords;
+    public static class ExamineWordsResult {
+        public final List<FraudWord> fraudWords;
 
         public ExamineWordsResult(List<FraudWord> fraudWords) {
             this.fraudWords = fraudWords;

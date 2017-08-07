@@ -23,16 +23,16 @@ public class UserActor extends AbstractActor {
             .build();
     }
 
-    static class CheckUserResult {
-        final UserCriminalRecord record;
+    public static class CheckUserResult {
+        public final UserCriminalRecord record;
 
         public CheckUserResult(UserCriminalRecord record) {
             this.record = record;
         }
     }
 
-    static class CheckUser {
-        final Integer userId;
+    public static class CheckUser {
+        public final Integer userId;
 
         public CheckUser(Integer userId) {
             this.userId = userId;
