@@ -11,8 +11,6 @@ import workshop.common.fraudwordsservice.FraudWordService;
 import workshop.common.userservice.UserCriminalRecord;
 import workshop.common.userservice.UserService;
 
-import static workshop.common.ad.Ad.toVerdictStatus;
-
 public class VettingActor extends AbstractActor {
 
     private final UserService userService;
@@ -53,7 +51,7 @@ public class VettingActor extends AbstractActor {
         UserCriminalRecord record = userService.vettUser(ad.userId);
         List<FraudWord> fraudWords = fraudWordService.examineWords(ad.toAdWords());
 
-        return toVerdictStatus(record, fraudWords);
+        return Ad.toVerdictStatus(record, fraudWords);
     }
 
     private void scheduleReportNumVettedAds() {

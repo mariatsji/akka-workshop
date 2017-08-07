@@ -19,7 +19,6 @@ public class VettingActorFactory {
 
     public ActorRef create(ActorContext context) {
         return context.system().actorOf(Props.create(VettingActor.class,
-            () -> new VettingActor(userActor, fraudWordActor, Duration.create(1, TimeUnit.SECONDS))), "vettingActor");
-
+            () -> new VettingActor(userActor, fraudWordActor, Duration.create(1, TimeUnit.SECONDS))));
     }
 }

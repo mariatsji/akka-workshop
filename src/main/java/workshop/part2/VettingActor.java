@@ -5,6 +5,7 @@ import akka.actor.ActorRef;
 import akka.japi.pf.ReceiveBuilder;
 import scala.concurrent.duration.FiniteDuration;
 import workshop.common.ad.Ad;
+import workshop.part1.Verdict;
 import workshop.part2.FraudWordActor.ExamineWords;
 import workshop.part2.FraudWordActor.ExamineWordsResult;
 import workshop.part2.UserActor.CheckUser;
@@ -51,7 +52,10 @@ public class VettingActor extends AbstractActor {
                     examineWordsResult = m;
                 }
             })
-            .match(TimeoutVetting.class, m -> context().stop(self()))
+            .match(TimeoutVetting.class, m -> {
+                sender.tell(Verdict.UNKNOWN, self());
+                context().stop(self());
+            })
             .build();
     }
 

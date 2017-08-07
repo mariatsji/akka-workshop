@@ -6,7 +6,6 @@ import javaslang.collection.List;
 import workshop.common.fraudwordsservice.FraudWord;
 import workshop.common.userservice.UserCriminalRecord;
 import workshop.part1.Verdict;
-import workshop.part1.VerdictStatus;
 
 public class Ad {
 
@@ -30,9 +29,9 @@ public class Ad {
 
     public static Verdict toVerdictStatus(UserCriminalRecord record, List<FraudWord> fraudWords) {
         if (record == UserCriminalRecord.GOOD && fraudWords.isEmpty()) {
-            return new Verdict(fraudWords, VerdictStatus.GOOD);
+            return Verdict.GOOD;
         } else {
-            return new Verdict(fraudWords, VerdictStatus.BAD);
+            return Verdict.BAD;
         }
     }
 

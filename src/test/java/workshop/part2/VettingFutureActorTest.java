@@ -24,7 +24,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
-public class VettingActorTest extends AkkaTest {
+public class VettingFutureActorTest extends AkkaTest {
 
     TestProbe userActor = TestProbe.apply(system);
     TestProbe fraudWordActor = TestProbe.apply(system);
@@ -81,8 +81,8 @@ public class VettingActorTest extends AkkaTest {
         sender.watch(vettingActor);
         sender.send(vettingActor, createAd());
 
-        schedule(Duration.create(100, TimeUnit.MILLISECONDS), vettingActor, new CheckUserResult(UserCriminalRecord.GOOD));
-        schedule(Duration.create(100, TimeUnit.MILLISECONDS), vettingActor, new ExamineWordsResult(List.empty()));
+        schedule(Duration.create(500, TimeUnit.MILLISECONDS), vettingActor, new CheckUserResult(UserCriminalRecord.GOOD));
+        schedule(Duration.create(500, TimeUnit.MILLISECONDS), vettingActor, new ExamineWordsResult(List.empty()));
 
         assertThat(sender.expectMsgClass(Verdict.class), is(Verdict.UNKNOWN));
     }
@@ -96,6 +96,6 @@ public class VettingActorTest extends AkkaTest {
     }
 
     private TestActorRef<VettingActor> createVettingActor(FiniteDuration timeoutVetting) {
-        return TestActorRef.create(system, Props.create(VettingActor.class, () -> new VettingActor(userActor.ref(), fraudWordActor.ref(), timeoutVetting)));
+        return TestActorRef.create(system, Props.create(VettingFutureActor.class, () -> new VettingFutureActor(userActor.ref(), fraudWordActor.ref(), timeoutVetting)));
     }
 }

@@ -49,7 +49,7 @@ public class VettingActorTest extends AkkaTest {
         createVettingActor().tell(ad, sender.ref());
         Verdict verdict = sender.expectMsgClass(Verdict.class);
 
-        assertThat(verdict.verdictStatus, is(VerdictStatus.GOOD));
+        assertThat(verdict, is(Verdict.GOOD));
     }
 
     @Test
@@ -63,7 +63,7 @@ public class VettingActorTest extends AkkaTest {
         createVettingActor().tell(createAd(), sender.ref());
         Verdict verdict = sender.expectMsgClass(Verdict.class);
 
-        assertThat(verdict.verdictStatus, is(VerdictStatus.BAD));
+        assertThat(verdict, is(Verdict.BAD));
     }
 
     @Test
@@ -78,7 +78,7 @@ public class VettingActorTest extends AkkaTest {
         createVettingActor().tell(ad, sender.ref());
         Verdict verdict = sender.expectMsgClass(Verdict.class);
 
-        assertThat(verdict.verdictStatus, is(VerdictStatus.BAD));
+        assertThat(verdict, is(Verdict.BAD));
     }
     
     @Test
