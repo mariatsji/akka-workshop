@@ -70,8 +70,8 @@ public class VettingActor extends AbstractActor {
     static class GetNumVettedAds {
     }
 
-    static class NumVettedAds {
-        final Integer numVettedAds;
+    public static class NumVettedAds {
+        public final Integer numVettedAds;
 
         public NumVettedAds(Integer numVettedAds) {
             this.numVettedAds = numVettedAds;
