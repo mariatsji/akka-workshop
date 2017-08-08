@@ -3,6 +3,7 @@ package workshop.part2.subactor;
 import java.util.concurrent.TimeUnit;
 
 import akka.actor.Props;
+import akka.actor.Terminated;
 import akka.testkit.TestActorRef;
 import akka.testkit.TestProbe;
 import javaslang.collection.List;
@@ -79,13 +80,57 @@ public class VettingActorTest extends AkkaTest {
     public void replaysWithUnknownVerdictWhenVettingTimeoutReached() {
         TestActorRef<VettingActor> vettingActor = createVettingActor(Duration.create(0, TimeUnit.MILLISECONDS));
 
-        sender.watch(vettingActor);
         sender.send(vettingActor, createAd());
 
         schedule(Duration.create(100, TimeUnit.MILLISECONDS), vettingActor, new CheckUserResult(UserCriminalRecord.GOOD));
         schedule(Duration.create(100, TimeUnit.MILLISECONDS), vettingActor, new ExamineWordsResult(List.empty()));
 
         assertThat(sender.expectMsgClass(Verdict.class), is(Verdict.UNKNOWN));
+    }
+
+    @Test
+    public void terminatesAfterAdWithNoFraudWordsAndUserWithoutCriminalRecord() {
+        TestActorRef<VettingActor> vettingActor = createVettingActor();
+        sender.watch(vettingActor);
+        sender.send(vettingActor, createAd());
+
+        userActor.expectMsgClass(CheckUser.class);
+        userActor.reply(new CheckUserResult(UserCriminalRecord.GOOD));
+
+        fraudWordActor.expectMsgClass(FraudWordActor.ExamineWords.class);
+        fraudWordActor.reply(new ExamineWordsResult(List.empty()));
+
+        sender.expectMsgClass(Verdict.class);
+        sender.expectMsgClass(Terminated.class);
+    }
+
+    @Test
+    public void terminatesAfterNotAcceptAdWithFraudWords() {
+        TestActorRef<VettingActor> vettingActor = createVettingActor();
+        sender.watch(vettingActor);
+        sender.send(vettingActor, createAd());
+
+        userActor.expectMsgClass(CheckUser.class);
+        userActor.reply(new CheckUserResult(UserCriminalRecord.GOOD));
+
+        fraudWordActor.expectMsgClass(FraudWordActor.ExamineWords.class);
+        fraudWordActor.reply(new ExamineWordsResult(List.of(new FraudWord("westernunion"))));
+
+        sender.expectMsgClass(Verdict.class);
+        sender.expectMsgClass(Terminated.class);
+    }
+
+    @Test
+    public void terminatesAfterVettingTimeoutReached() {
+        TestActorRef<VettingActor> vettingActor = createVettingActor(Duration.create(0, TimeUnit.MILLISECONDS));
+        sender.watch(vettingActor);
+        sender.send(vettingActor, createAd());
+
+        schedule(Duration.create(100, TimeUnit.MILLISECONDS), vettingActor, new CheckUserResult(UserCriminalRecord.GOOD));
+        schedule(Duration.create(100, TimeUnit.MILLISECONDS), vettingActor, new ExamineWordsResult(List.empty()));
+
+        sender.expectMsgClass(Verdict.class);
+        sender.expectMsgClass(Terminated.class);
     }
 
     private Ad createAd() {

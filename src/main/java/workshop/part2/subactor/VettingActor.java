@@ -40,23 +40,25 @@ public class VettingActor extends AbstractActor {
             })
             .match(CheckUserResult.class, m -> {
                 if (examineWordsResult != null) {
-                    sender.tell(toVerdictStatus(m.record, examineWordsResult.fraudWords), self());
+                    sendVerdictAndTerminateSelf(toVerdictStatus(m.record, examineWordsResult.fraudWords), sender);
                 } else {
                     checkUserResult = m;
                 }
             })
             .match(ExamineWordsResult.class, m -> {
                 if (checkUserResult != null) {
-                    sender.tell(toVerdictStatus(checkUserResult.record, m.fraudWords), self());
+                    sendVerdictAndTerminateSelf(toVerdictStatus(checkUserResult.record, m.fraudWords), sender);
                 } else {
                     examineWordsResult = m;
                 }
             })
-            .match(TimeoutVetting.class, m -> {
-                sender.tell(Verdict.UNKNOWN, self());
-                context().stop(self());
-            })
+            .match(TimeoutVetting.class, m -> sendVerdictAndTerminateSelf(Verdict.UNKNOWN, sender))
             .build();
+    }
+
+    private void sendVerdictAndTerminateSelf(Verdict verdict, ActorRef receiver) {
+        receiver.tell(verdict, self());
+        context().stop(self());
     }
 
     private void scheduleTimeout(FiniteDuration delay) {
