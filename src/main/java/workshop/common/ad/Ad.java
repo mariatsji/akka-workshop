@@ -3,9 +3,6 @@ package workshop.common.ad;
 import java.util.Random;
 
 import javaslang.collection.List;
-import workshop.common.fraudwordsservice.FraudWord;
-import workshop.common.userservice.UserCriminalRecord;
-import workshop.part1.Verdict;
 
 public class Ad {
 
@@ -24,15 +21,6 @@ public class Ad {
     public List<String> toAdWords() {
         return List.of(title.split("\\W"))
             .push(description.split("\\W"));
-    }
-
-
-    public static Verdict toVerdictStatus(UserCriminalRecord record, List<FraudWord> fraudWords) {
-        if (record == UserCriminalRecord.GOOD && fraudWords.isEmpty()) {
-            return Verdict.GOOD;
-        } else {
-            return Verdict.BAD;
-        }
     }
 
     @Override

@@ -3,15 +3,16 @@ package workshop.part2.subactor;
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import akka.japi.pf.ReceiveBuilder;
+import javaslang.collection.List;
 import scala.concurrent.duration.FiniteDuration;
 import workshop.common.ad.Ad;
+import workshop.common.fraudwordsservice.FraudWord;
+import workshop.common.userservice.UserCriminalRecord;
 import workshop.part1.Verdict;
 import workshop.part2.FraudWordActor.ExamineWords;
 import workshop.part2.FraudWordActor.ExamineWordsResult;
 import workshop.part2.UserActor.CheckUser;
 import workshop.part2.UserActor.CheckUserResult;
-
-import static workshop.common.ad.Ad.toVerdictStatus;
 
 public class VettingActor extends AbstractActor {
 
@@ -54,6 +55,14 @@ public class VettingActor extends AbstractActor {
             })
             .match(TimeoutVetting.class, m -> sendVerdictAndTerminateSelf(Verdict.UNKNOWN, sender))
             .build();
+    }
+
+    private Verdict toVerdictStatus(UserCriminalRecord record, List<FraudWord> fraudWords) {
+        if (record == UserCriminalRecord.GOOD && fraudWords.isEmpty()) {
+            return Verdict.GOOD;
+        } else {
+            return Verdict.BAD;
+        }
     }
 
     private void sendVerdictAndTerminateSelf(Verdict verdict, ActorRef receiver) {

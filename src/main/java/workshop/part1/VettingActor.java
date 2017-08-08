@@ -51,7 +51,15 @@ public class VettingActor extends AbstractActor {
         UserCriminalRecord record = userService.vettUser(ad.userId);
         List<FraudWord> fraudWords = fraudWordService.examineWords(ad.toAdWords());
 
-        return Ad.toVerdictStatus(record, fraudWords);
+        return toVerdictStatus(record, fraudWords);
+    }
+
+    private Verdict toVerdictStatus(UserCriminalRecord record, List<FraudWord> fraudWords) {
+        if (record == UserCriminalRecord.GOOD && fraudWords.isEmpty()) {
+            return Verdict.GOOD;
+        } else {
+            return Verdict.BAD;
+        }
     }
 
     private void scheduleReportNumVettedAds() {
