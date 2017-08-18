@@ -5,7 +5,9 @@ import akka.actor.OneForOneStrategy;
 import akka.actor.SupervisorStrategy;
 import akka.japi.pf.DeciderBuilder;
 import akka.japi.pf.ReceiveBuilder;
+import scala.PartialFunction;
 import scala.concurrent.duration.Duration;
+import scala.runtime.BoxedUnit;
 import workshop.common.ad.Ad;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
@@ -29,7 +31,7 @@ public class VettingSupervisor extends AbstractActor {
     }
 
     @Override
-    public Receive createReceive() {
+    public PartialFunction<Object, BoxedUnit> receive() {
         return ReceiveBuilder.create()
             .match(Ad.class, ad -> vettingActorFactory.create(context()).tell(ad, sender()))
             .build();

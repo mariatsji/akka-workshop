@@ -9,10 +9,12 @@ import akka.japi.pf.ReceiveBuilder;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
 import javaslang.collection.List;
+import scala.PartialFunction;
 import scala.concurrent.ExecutionContextExecutor;
 import scala.concurrent.Future;
 import scala.concurrent.duration.FiniteDuration;
 import scala.reflect.ClassTag;
+import scala.runtime.BoxedUnit;
 import workshop.common.ad.Ad;
 import workshop.common.userservice.UserCriminalRecord;
 import workshop.part1.Verdict;
@@ -34,7 +36,7 @@ public class VettingFutureActor extends AbstractActor {
     }
 
     @Override
-    public Receive createReceive() {
+    public PartialFunction<Object, BoxedUnit> receive() {
         return ReceiveBuilder.create()
             .match(Ad.class, ad -> {
                 Future<CheckUserResult> userFuture = Patterns.ask(userActor, new CheckUser(ad.userId), new Timeout(timeoutVetting))

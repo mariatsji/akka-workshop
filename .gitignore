@@ -6,3 +6,8 @@ project/target
 .cache
 .idea*
 *.iml
+*.ipr
+*.iws
+.gradle
+build/
+

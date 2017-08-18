@@ -4,7 +4,9 @@ import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import akka.japi.pf.ReceiveBuilder;
 import javaslang.collection.List;
+import scala.PartialFunction;
 import scala.concurrent.duration.FiniteDuration;
+import scala.runtime.BoxedUnit;
 import workshop.common.ad.Ad;
 import workshop.common.fraudwordsservice.FraudWord;
 import workshop.common.fraudwordsservice.FraudWordService;
@@ -32,12 +34,12 @@ public class VettingActor extends AbstractActor {
     }
 
     @Override
-    public Receive createReceive() {
+    public PartialFunction<Object, BoxedUnit> receive() {
         return ReceiveBuilder.create()
             .match(Ad.class, ad -> {
                 Verdict verdict = performVetting(ad);
                 numVettedAds += 1;
-                sender().tell(verdict, getSelf());
+                sender().tell(verdict, self());
             })
             .match(GetNumVettedAds.class, m -> sender().tell(new NumVettedAds(numVettedAds), self()))
             .match(ReportNumVettedAds.class, m -> {
