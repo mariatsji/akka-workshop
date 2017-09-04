@@ -25,7 +25,7 @@ public class VettingActor extends AbstractActor {
     private ExamineWordsResult examineWordsResult;
     private ActorRef sender;
 
-    VettingActor(ActorRef userActor, ActorRef fraudWordActor, FiniteDuration timeoutVetting) {
+    public VettingActor(ActorRef userActor, ActorRef fraudWordActor, FiniteDuration timeoutVetting) {
         this.userActor = userActor;
         this.fraudWordActor = fraudWordActor;
         this.timeoutVetting = timeoutVetting;

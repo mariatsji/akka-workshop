@@ -2,9 +2,12 @@ package workshop.part3;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.TimeUnit;
 
 import akka.NotUsed;
+import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
+import akka.actor.Props;
 import akka.http.javadsl.ConnectHttp;
 import akka.http.javadsl.Http;
 import akka.http.javadsl.ServerBinding;
@@ -14,9 +17,18 @@ import akka.http.javadsl.model.HttpResponse;
 import akka.http.javadsl.model.StatusCodes;
 import akka.http.javadsl.server.AllDirectives;
 import akka.http.javadsl.server.Route;
+import akka.pattern.Patterns;
 import akka.stream.ActorMaterializer;
 import akka.stream.javadsl.Flow;
 import javaslang.control.Option;
+import scala.concurrent.Future;
+import scala.concurrent.duration.Duration;
+import workshop.common.ad.Ad;
+import workshop.common.fraudwordsservice.FraudWordService;
+import workshop.common.userservice.UserService;
+import workshop.part2.FraudWordActor;
+import workshop.part2.UserActor;
+import workshop.part2.subactor.VettingActor;
 
 import static akka.http.javadsl.server.PathMatchers.longSegment;
 
@@ -25,16 +37,26 @@ public class AkkaHttpFront extends AllDirectives {
     public static final String HOST_BINDING = "localhost";
     public static final int PORT = 8080;
 
+    private ActorRef vettingActor;
+
     public static void main(String[] args) {
+        AkkaHttpFront app = new AkkaHttpFront();
+
+        app.start();
+    }
+
+    private void start() {
         // boot up server using the route as defined below
         ActorSystem system = ActorSystem.create("routes");
+
+        ActorRef userActor = system.actorOf(Props.create(UserActor.class, () -> new UserActor(new UserService())));
+        ActorRef fraudWordActor = system.actorOf(Props.create(FraudWordActor.class, () -> new FraudWordActor(new FraudWordService())));
+        vettingActor = system.actorOf(Props.create(VettingActor.class, () -> new VettingActor(userActor, fraudWordActor, Duration.create(1, TimeUnit.SECONDS))));
 
         final Http http = Http.get(system);
         final ActorMaterializer materializer = ActorMaterializer.create(system);
 
-        AkkaHttpFront app = new AkkaHttpFront();
-
-        Flow<HttpRequest, HttpResponse, NotUsed> flow = app.createRoute().flow(system, materializer);
+        Flow<HttpRequest, HttpResponse, NotUsed> flow = createRoute().flow(system, materializer);
 
         CompletionStage<ServerBinding> binding = http.bindAndHandle(flow, ConnectHttp.toHost(
                 HOST_BINDING, PORT), materializer);
@@ -83,6 +105,8 @@ public class AkkaHttpFront extends AllDirectives {
 
     // (fake) async database query api
     private CompletionStage<Verdict> performVetting(final Ad ad) {
+        Future<Object> ask = Patterns.ask(vettingActor, ad, 1000);//todo
+
         return CompletableFuture.completedFuture(new Verdict(String.valueOf(ad.getAdId()), Verdict.VerdictType.GOOD));
     }
 

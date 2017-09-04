@@ -2,6 +2,8 @@ package workshop.common.ad;
 
 import java.util.Random;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import javaslang.collection.List;
 
 public class Ad {
@@ -11,7 +13,10 @@ public class Ad {
     public final String title;
     public final String description;
 
-    public Ad(Integer userId, String title, String description) {
+    @JsonCreator
+    public Ad(@JsonProperty(value = "userId") Integer userId,
+              @JsonProperty(value = "title") String title,
+              @JsonProperty(value = "description") String description) {
         this.adId = new Random().nextInt();
         this.userId = userId;
         this.title = title;
@@ -23,28 +28,19 @@ public class Ad {
             .push(description.split("\\W"));
     }
 
-    @Override
-    public String toString() {
-        return "Ad{" +
-            "adId=" + adId +
-            ", userId=" + userId +
-            ", title='" + title + '\'' +
-            ", description='" + description + '\'' +
-            '}';
+    public Integer getAdId() {
+        return adId;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Ad ad = (Ad) o;
-
-        return adId.equals(ad.adId);
+    public Integer getUserId() {
+        return userId;
     }
 
-    @Override
-    public int hashCode() {
-        return adId.hashCode();
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }
