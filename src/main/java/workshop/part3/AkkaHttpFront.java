@@ -2,7 +2,6 @@ package workshop.part3;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.TimeUnit;
 
 import akka.NotUsed;
 import akka.actor.ActorRef;
@@ -22,13 +21,11 @@ import akka.stream.ActorMaterializer;
 import akka.stream.javadsl.Flow;
 import javaslang.control.Option;
 import scala.concurrent.Future;
-import scala.concurrent.duration.Duration;
 import workshop.common.ad.Ad;
 import workshop.common.fraudwordsservice.FraudWordService;
 import workshop.common.userservice.UserService;
-import workshop.part2.FraudWordActor;
-import workshop.part2.UserActor;
-import workshop.part2.subactor.VettingActor;
+import workshop.part3.subactor.VettingActorFactory;
+import workshop.part3.subactor.VettingSupervisor;
 
 import static akka.http.javadsl.server.PathMatchers.longSegment;
 
@@ -37,7 +34,7 @@ public class AkkaHttpFront extends AllDirectives {
     public static final String HOST_BINDING = "localhost";
     public static final int PORT = 8080;
 
-    private ActorRef vettingActor;
+    private ActorRef vettingSupervisor;
 
     public static void main(String[] args) {
         AkkaHttpFront app = new AkkaHttpFront();
@@ -51,7 +48,7 @@ public class AkkaHttpFront extends AllDirectives {
 
         ActorRef userActor = system.actorOf(Props.create(UserActor.class, () -> new UserActor(new UserService())));
         ActorRef fraudWordActor = system.actorOf(Props.create(FraudWordActor.class, () -> new FraudWordActor(new FraudWordService())));
-        vettingActor = system.actorOf(Props.create(VettingActor.class, () -> new VettingActor(userActor, fraudWordActor, Duration.create(1, TimeUnit.SECONDS))));
+        vettingSupervisor = system.actorOf(Props.create(VettingSupervisor.class, () -> new VettingSupervisor(new VettingActorFactory(userActor, fraudWordActor))));
 
         final Http http = Http.get(system);
         final ActorMaterializer materializer = ActorMaterializer.create(system);
@@ -105,7 +102,7 @@ public class AkkaHttpFront extends AllDirectives {
 
     // (fake) async database query api
     private CompletionStage<Verdict> performVetting(final Ad ad) {
-        Future<Object> ask = Patterns.ask(vettingActor, ad, 1000);//todo
+        Future<Object> ask = Patterns.ask(vettingSupervisor, ad, 1000);//todo
 
         return CompletableFuture.completedFuture(new Verdict(String.valueOf(ad.getAdId()), Verdict.VerdictType.GOOD));
     }
