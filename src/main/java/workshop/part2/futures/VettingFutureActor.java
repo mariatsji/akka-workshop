@@ -39,7 +39,7 @@ public class VettingFutureActor extends AbstractActor {
     public PartialFunction<Object, BoxedUnit> receive() {
         return ReceiveBuilder.create()
             .match(Ad.class, ad -> {
-                Future<CheckUserResult> userFuture = Patterns.ask(userActor, new CheckUser(ad.userId), new Timeout(timeoutVetting))
+                Future<CheckUserResult> userFuture = Patterns.ask(userActor, new CheckUser(ad.getUserId()), new Timeout(timeoutVetting))
                     .mapTo(ClassTag.apply(CheckUserResult.class));
 
                 Future<ExamineWordsResult> fraudWordFuture = Patterns.ask(fraudWordActor, new ExamineWords(ad.toAdWords()), new Timeout(timeoutVetting))
@@ -48,7 +48,7 @@ public class VettingFutureActor extends AbstractActor {
                 ExecutionContextExecutor ec = context().system().dispatcher();
 
                 Future<Boolean> userOk = userFuture.map(result -> result.record == UserCriminalRecord.GOOD, ec);
-                Future<Boolean> fraudWordsOk = fraudWordFuture.map(result -> result.fraudWords.isEmpty(), ec);
+                Future<Boolean> fraudWordsOk = fraudWordFuture.map(result -> result.getFraudWords().isEmpty(), ec);
 
                 Future<Verdict> verdict = Futures.reduce(List.of(userOk, fraudWordsOk),
                     (Function2<Boolean, Boolean, Boolean>) (result, current) -> result && current, ec)

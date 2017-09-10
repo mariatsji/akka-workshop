@@ -47,7 +47,7 @@ public class Main {
         public PartialFunction<Object, BoxedUnit> receive() {
             return ReceiveBuilder.create()
                 .match(VettingActor.NumVettedAds.class, m -> {
-                    System.out.println("Num vetted ads: " + m.numVettedAds);
+                    System.out.println("Num vetted ads: " + m.getNumVettedAds());
                 })
                 .build();
         }
