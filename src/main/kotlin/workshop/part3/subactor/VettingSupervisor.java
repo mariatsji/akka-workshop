@@ -12,9 +12,9 @@ import scala.concurrent.duration.Duration;
 import scala.runtime.BoxedUnit;
 import workshop.common.ad.Ad;
 
+import static java.util.concurrent.TimeUnit.MINUTES;
 import static akka.actor.SupervisorStrategy.escalate;
 import static akka.actor.SupervisorStrategy.restart;
-import static java.util.concurrent.TimeUnit.MINUTES;
 
 public class VettingSupervisor extends AbstractActor {
 
