@@ -1,6 +1,5 @@
 package workshop.part2.subactor
 
-import akka.actor.ActorContext
 import akka.actor.ActorRef
 import akka.actor.ActorRef.noSender
 import akka.actor.Props
@@ -9,13 +8,14 @@ import akka.testkit.JavaTestKit.duration
 import akka.testkit.TestActor
 import akka.testkit.TestActorRef
 import akka.testkit.TestKit
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.core.Is.`is`
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Matchers.any
-import org.mockito.Matchers.isA
-import org.mockito.Mockito.*
+import org.mockito.Mockito.mock
 import org.mockito.runners.MockitoJUnitRunner
 import workshop.common.ad.Ad
 import workshop.common.userservice.UserCriminalRecord
@@ -31,14 +31,14 @@ class VettingSupervisorTest : AkkaTest() {
     fun createsVettingActorWhenAdIsReceived() {
         val vettingActorFactory = mock(VettingActorFactory::class.java)
 
-        `when`(vettingActorFactory.create(any()))
+        whenever(vettingActorFactory.create(any()))
                 .thenReturn(sender.ref())
 
         val ad = createAd(123)
         createVettingSupervisor(vettingActorFactory).tell(ad, sender.ref())
 
-        verify(vettingActorFactory).create(isA(ActorContext::class.java))
-        assertThat(sender.expectMsgClass(Ad::class.java), `is`(ad))
+        verify(vettingActorFactory).create(any())
+        assertThat(sender.expectMsgClass(Ad::class.java), equalTo(ad))
     }
 
     @Test
@@ -70,10 +70,8 @@ class VettingSupervisorTest : AkkaTest() {
                 within<Any>(duration("3 seconds")) {
 
                     // Ideally we should different responses
-                    assertThat(expectMsgClass(Verdict::class.java), `is`(Verdict.GOOD))
-                    assertThat(expectMsgClass(Verdict::class.java), `is`(Verdict.GOOD))
-
-                    null
+                    assertThat(expectMsgClass(Verdict::class.java), equalTo((Verdict.GOOD)))
+                    assertThat(expectMsgClass(Verdict::class.java), equalTo((Verdict.GOOD)))
                 }
             }
         }
@@ -87,7 +85,7 @@ class VettingSupervisorTest : AkkaTest() {
                 .decider()
                 .apply(NullPointerException("test exception"))
 
-        assertThat(strategy, `is`<SupervisorStrategy.Directive>(SupervisorStrategy.restart()))
+        assertThat(strategy, equalTo(SupervisorStrategy.restart() as SupervisorStrategy.Directive))
     }
 
     @Test
@@ -98,7 +96,7 @@ class VettingSupervisorTest : AkkaTest() {
                 .decider()
                 .apply(RuntimeException("test exception"))
 
-        assertThat(strategy, `is`<SupervisorStrategy.Directive>(SupervisorStrategy.escalate()))
+        assertThat(strategy, equalTo(SupervisorStrategy.escalate() as SupervisorStrategy.Directive))
     }
 
     private fun createVettingSupervisor(vettingActorFactory: VettingActorFactory): TestActorRef<VettingSupervisor> {
