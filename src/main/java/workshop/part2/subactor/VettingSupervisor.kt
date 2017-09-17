@@ -17,8 +17,8 @@ class VettingSupervisor internal constructor(private val vettingActorFactory: Ve
 
     override fun supervisorStrategy(): SupervisorStrategy {
         return OneForOneStrategy(10, Duration.create(1, MINUTES), DeciderBuilder
-                .match(NullPointerException::class.java) { e -> restart() }
-                .matchAny { e -> escalate() }
+                .match(NullPointerException::class.java) { restart() }
+                .matchAny { escalate() }
                 .build())
     }
 

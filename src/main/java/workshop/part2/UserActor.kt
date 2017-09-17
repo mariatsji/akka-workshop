@@ -1,21 +1,17 @@
 package workshop.part2
 
-import akka.actor.AbstractActor
-import akka.japi.pf.ReceiveBuilder
-import scala.PartialFunction
-import scala.runtime.BoxedUnit
+import akka.actor.UntypedActor
 import workshop.common.userservice.UserCriminalRecord
 import workshop.common.userservice.UserService
 
-class UserActor(private val userService: UserService) : AbstractActor() {
+class UserActor(private val userService: UserService) : UntypedActor() {
 
-    override fun receive(): PartialFunction<Any, BoxedUnit> {
-        return ReceiveBuilder.create()
-                .match(CheckUser::class.java) { m ->
-                    val result = userService.vettUser(m.userId)
-                    sender().tell(CheckUserResult(result), sender())
-                }
-                .build()
+    override fun onReceive(msg: Any?) = when (msg) {
+        is CheckUser -> {
+            val result = userService.vettUser(msg.userId)
+            sender().tell(CheckUserResult(result), sender())
+        }
+        else -> unhandled(msg)
     }
 
     class CheckUserResult(val record: UserCriminalRecord)
