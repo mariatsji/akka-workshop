@@ -98,12 +98,6 @@ class VettingActorTest : AkkaTest() {
 
     @Test
     fun reportsNumVettedAdsEveryConfiguredInterval() {
-        whenever(userService.vettUser(eq(1)))
-                .thenReturn(UserCriminalRecord.GOOD)
-
-        whenever(fraudWordService.examineWords(any()))
-                .thenReturn(emptyList())
-
         createVettingActor(sender.ref(), Duration.create(1, TimeUnit.MILLISECONDS))
 
         assertThat(sender.expectMsgClass(NumVettedAds::class.java).numVettedAds, equalTo(0))

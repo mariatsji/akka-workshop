@@ -1,8 +1,8 @@
 package workshop.common.fraudwordsservice
 
-open class FraudWordService {
+class FraudWordService {
 
-    open fun examineWords(words: List<String>): List<FraudWord> {
+    fun examineWords(words: List<String>): List<FraudWord> {
         return words
                 .map { it.trim() }
                 .filter { !it.isEmpty() }
