@@ -1,4 +1,4 @@
-package workshop.part2.subactor
+package workshop.part2.supervisor
 
 import akka.actor.ActorRef
 import akka.actor.ActorRef.noSender
