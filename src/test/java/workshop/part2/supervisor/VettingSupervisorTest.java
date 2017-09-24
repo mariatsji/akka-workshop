@@ -1,4 +1,4 @@
-package workshop.part2.subactor;
+package workshop.part2.supervisor;
 
 import akka.actor.ActorContext;
 import akka.actor.ActorRef;
@@ -71,8 +71,6 @@ public class VettingSupervisorTest extends AkkaTest {
             vettingActor.tell(createAd(2), testActor());
 
             within(duration("3 seconds"), () -> {
-
-                // Ideally we should different responses
                 assertThat(expectMsgClass(Verdict.class), is(Verdict.GOOD));
                 assertThat(expectMsgClass(Verdict.class), is(Verdict.GOOD));
 

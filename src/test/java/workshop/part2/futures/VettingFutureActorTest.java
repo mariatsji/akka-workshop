@@ -77,7 +77,7 @@ public class VettingFutureActorTest extends AkkaTest {
     }
 
     @Test
-    public void replaysWithUnknownVerdictWhenVettingTimeoutReached() {
+    public void repliesWithUnknownVerdictWhenVettingTimeoutReached() {
         TestActorRef<VettingActor> vettingActor = createVettingActor(Duration.create(0, TimeUnit.MILLISECONDS));
 
         sender.watch(vettingActor);
