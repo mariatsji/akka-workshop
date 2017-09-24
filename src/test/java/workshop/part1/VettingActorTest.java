@@ -2,8 +2,14 @@ package workshop.part1;
 
 import java.util.concurrent.TimeUnit;
 
+import akka.actor.AbstractActor;
+import akka.actor.Actor;
 import akka.actor.ActorRef;
+import akka.actor.OneForOneStrategy;
 import akka.actor.Props;
+import akka.actor.SupervisorStrategy;
+import akka.japi.pf.DeciderBuilder;
+import akka.japi.pf.ReceiveBuilder;
 import akka.testkit.TestActorRef;
 import akka.testkit.TestProbe;
 import javaslang.collection.List;
@@ -11,8 +17,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import scala.PartialFunction;
 import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.FiniteDuration;
+import scala.runtime.BoxedUnit;
 import workshop.common.ad.Ad;
 import workshop.common.fraudwordsservice.FraudWord;
 import workshop.common.fraudwordsservice.FraudWordService;
@@ -22,10 +30,12 @@ import workshop.part1.VettingActor.GetNumVettedAds;
 import workshop.part1.VettingActor.NumVettedAds;
 import workshop.part1.VettingActor.ReportNumVettedAds;
 
+import static akka.actor.SupervisorStrategy.resume;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 
@@ -138,6 +148,22 @@ public class VettingActorTest extends AkkaTest {
         assertThat(numVettedAdsActor.expectMsgClass(NumVettedAds.class).numVettedAds, is(2));
     }
 
+    @Test
+    public void doesNotCountVettingThatFails() {
+        when(userService.vettUser(eq(1)))
+            .thenReturn(UserCriminalRecord.GOOD);
+
+        doThrow(new RuntimeException("Vetting failed"))
+            .when(fraudWordService)
+            .examineWords(any());
+
+        TestActorRef<VettingActor> vettingActor = createVettingActor();
+        sender.send(vettingActor, createAd());
+
+        sender.send(vettingActor, new GetNumVettedAds());
+        assertThat(sender.expectMsgClass(NumVettedAds.class).numVettedAds, is(0));
+    }
+
     private Ad createAd() {
         return new Ad(1, "Sofa", "Selling sofa");
     }
@@ -147,6 +173,23 @@ public class VettingActorTest extends AkkaTest {
     }
 
     private TestActorRef<VettingActor> createVettingActor(ActorRef numVettedAdsActor, FiniteDuration numVettedAdsInterval) {
-        return TestActorRef.create(system, Props.create(VettingActor.class, () -> new VettingActor(userService, fraudWordService, numVettedAdsActor, numVettedAdsInterval)));
+        TestActorRef<Actor> supervisor = TestActorRef.create(system, Props.create(ResumingSupervisor.class));
+
+        return TestActorRef.create(system, Props.create(VettingActor.class,
+            () -> new VettingActor(userService, fraudWordService, numVettedAdsActor, numVettedAdsInterval)), supervisor
+        );
     }
+
+    private static class ResumingSupervisor extends AbstractActor {
+        @Override
+        public SupervisorStrategy supervisorStrategy() {
+            return new OneForOneStrategy(DeciderBuilder.matchAny(e -> resume()).build());
+        }
+
+        @Override
+        public PartialFunction<Object, BoxedUnit> receive() {
+            return ReceiveBuilder.create().build();
+        }
+    }
+
 }
