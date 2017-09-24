@@ -74,7 +74,7 @@ class VettingActorTest : AkkaTest() {
     }
 
     @Test
-    fun replaysWithUnknownVerdictWhenVettingTimeoutReached() {
+    fun repliesWithUnknownVerdictWhenVettingTimeoutReached() {
         val vettingActor = createVettingActor(Duration.create(0, TimeUnit.MILLISECONDS))
 
         sender.send(vettingActor, createAd())
