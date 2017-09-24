@@ -1,20 +1,25 @@
 package workshop.part1
 
-import akka.actor.ActorRef
-import akka.actor.Props
+import akka.actor.*
+import akka.actor.SupervisorStrategy.resume
+import akka.japi.pf.DeciderBuilder
+import akka.japi.pf.ReceiveBuilder
 import akka.testkit.TestActorRef
 import akka.testkit.TestProbe
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.doThrow
 import com.nhaarman.mockito_kotlin.eq
 import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.runners.MockitoJUnitRunner
+import org.mockito.junit.MockitoJUnitRunner
+import scala.PartialFunction
 import scala.concurrent.duration.Duration
 import scala.concurrent.duration.FiniteDuration
+import scala.runtime.BoxedUnit
 import workshop.common.ad.Ad
 import workshop.common.fraudwordsservice.FraudWord
 import workshop.common.fraudwordsservice.FraudWordService
@@ -128,11 +133,47 @@ class VettingActorTest : AkkaTest() {
         assertThat(numVettedAdsActor.expectMsgClass(NumVettedAds::class.java).numVettedAds, equalTo(2))
     }
 
-    private fun createAd(): Ad {
-        return Ad(1, "Sofa", "Selling sofa")
+    @Test
+    fun doesNotCountVettingThatFails() {
+        whenever(userService.vettUser(eq(1)))
+                .thenReturn(UserCriminalRecord.GOOD)
+                .thenThrow(RuntimeException("Vetting failed"))
+
+        doThrow(RuntimeException("Vetting failed"))
+                .whenever(userService)
+                .vettUser(eq(2))
+
+        whenever(fraudWordService.examineWords(any()))
+                .thenReturn(emptyList())
+
+        val vettingActor = createVettingActor()
+        sender.send(vettingActor, createAd(userId = 1))
+        sender.expectMsgClass(Verdict::class.java)
+        sender.send(vettingActor, createAd(userId = 2))
+
+        sender.send(vettingActor, GetNumVettedAds())
+        assertThat(sender.expectMsgClass(NumVettedAds::class.java).numVettedAds, equalTo(1))
     }
 
-    private fun createVettingActor(numVettedAdsActor: ActorRef = TestProbe.apply(system).ref(), numVettedAdsInterval: FiniteDuration = Duration.create(1, TimeUnit.SECONDS)): TestActorRef<VettingActor> {
-        return TestActorRef.create(system, Props.create(VettingActor::class.java) { VettingActor(userService, fraudWordService, numVettedAdsActor, numVettedAdsInterval) })
+    private fun createAd(userId: Int = 1): Ad {
+        return Ad(userId, "Sofa", "Selling sofa")
+    }
+
+    private fun createVettingActor(numVettedAdsActor: ActorRef = TestProbe.apply(system).ref(),
+                                   numVettedAdsInterval: FiniteDuration = Duration.create(1, TimeUnit.SECONDS)): TestActorRef<VettingActor> {
+        val supervisor = TestActorRef.create<Actor>(system, Props.create(ResumingSupervisor::class.java))
+
+        return TestActorRef.create(system, Props.create(VettingActor::class.java) {
+            VettingActor(userService, fraudWordService, numVettedAdsActor, numVettedAdsInterval) }, supervisor)
+    }
+
+    private class ResumingSupervisor : AbstractActor() {
+        override fun supervisorStrategy(): SupervisorStrategy {
+            return OneForOneStrategy(DeciderBuilder.matchAny { resume() }.build())
+        }
+
+        override fun receive(): PartialFunction<Any, BoxedUnit> {
+            return ReceiveBuilder.create().build()
+        }
     }
 }
