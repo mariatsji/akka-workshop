@@ -154,14 +154,19 @@ public class VettingActorTest extends AkkaTest {
             .thenReturn(UserCriminalRecord.GOOD);
 
         doThrow(new RuntimeException("Vetting failed"))
-            .when(fraudWordService)
-            .examineWords(any());
+            .when(userService)
+            .vettUser(eq(2));
+
+        when(fraudWordService.examineWords(any()))
+            .thenReturn(List.empty());
 
         TestActorRef<VettingActor> vettingActor = createVettingActor();
-        sender.send(vettingActor, createAd());
+        sender.send(vettingActor, new Ad(1, "Sofa", "Selling sofa"));
+        sender.expectMsgClass(Verdict.class);
+        sender.send(vettingActor, new Ad(2, "Sofa", "Selling sofa"));
 
         sender.send(vettingActor, new GetNumVettedAds());
-        assertThat(sender.expectMsgClass(NumVettedAds.class).numVettedAds, is(0));
+        assertThat(sender.expectMsgClass(NumVettedAds.class).numVettedAds, is(1));
     }
 
     private Ad createAd() {
