@@ -43,25 +43,25 @@ URL: https://code.google.com/p/io-2012-slides
             <section>
                 <ul>
                     <li>Example code presented in the slides will be in scala.</li>
-                    <li>All the example code can be found in both the Scala and Java branch.</li>
+                    <li>All the example code can be found in both the Kotlin and Java branch.</li>
                 </ul>
             </section>
         </aside>
         <article class="flexbox vleft">
             <ul>
-                <li>Code: <a href="https://github.com/arild/akka-workshop">https://github.com/arild/akka-workshop</a></li>
+                <li>Code: <a href="https://bitbucket.org/finnakka/akka-workshop">https://bitbucket.org/finnakka/akka-workshop</a></li>
                 <li>
                     <ul>
-                        <li>'java' and 'scala' are starting point for exercises</li>
-                        <li>'java-solution' and 'scala-solution' for solution</li>
+                        <li>'java' and 'kotlin' are starting point for exercises</li>
+                        <li>'java-solution' and 'kotlin-solution' for solution</li>
                         <li>E.g. 'git checkout java' for branch with Java exercises</li>
-                        <li>Start downloading dependencies: './sbt test' or 'mvn test'  </li>
+                        <li>Start downloading dependencies: 'mvn test'  </li>
                     </ul>
                 </li>
             </ul>
 
             <ul>
-                <li>Slides: <a href="http://arild.github.com/akka-workshop">http://arild.github.com/akka-workshop</a></span></li>
+                <li>Slides: `cd slides && ./serve.sh`</span></li>
                 <li>
                     <ul>
                         <li>Or /slides/index.html in 'master' branch</li>
@@ -263,40 +263,19 @@ class GreetingActor(delay: FiniteDuration) extends Actor {
         </hgroup>
         <article class="large">
             <ul>
-               <li>git clone <a href="https://github.com/arild/akka-workshop.git">https://github.com/arild/akka-workshop.git</a></li>
-               <li>Implement ComputeActor</li>
-               <li>Make tests in ComputeActorTest green</li>
-               <li>Have a look in the package called "work"</li>
+               <li>git clone <a href="https://bitbucket.org/finnakka/akka-workshop">https://bitbucket.org/finnakka/akka-workshop</a></li>
+               <li>Implement VettingActor</li>
+               <li>Make tests in VettingActorTest green</li>
             </ul>
             <br>
 
             <ul>
                 <li>Docs:
                     <ul>
-                        <li>Creating actors<a style="margin-left: 1em" href="http://doc.akka.io/docs/akka/2.3.9/java/lambda-actors.html#creating-actors">Java</a>|<a href="http://doc.akka.io/docs/akka/2.3.9/scala/actors.html#creating-actors">Scala</a></li>
-                        <li>Scheduling messages<a style="margin-left: 1em" href="http://doc.akka.io/docs/akka/2.3.9/java/scheduler.html">Java</a>|<a href="http://doc.akka.io/docs/akka/2.3.9/scala/scheduler.html">Scala</a></li>
+                        <li><a style="margin-left: 1em" href="http://doc.akka.io/docs/akka/2.4.19/java/lambda-actors.html#creating-actors">Creating actors</a>
+                        <li><a style="margin-left: 1em" href="http://doc.akka.io/docs/akka/2.4.19/java/scheduler.html">Scheduling messages</a></li>
                     </ul>
                 </li>
-            </ul>
-        </article>
-    </slide>
-
-    <slide>
-        <hgroup>
-            <h2>Exercises - Running tests in SBT</h2>
-        </hgroup>
-        <article class="large">
-            <ul>
-                <li>Running multiple test classes<br /><br />
-                <pre class="prettyprint">$ ./sbt
-> test-only workshop.part1.ComputeActorTest workshop.part2.ComputeSupervisorTest</pre>
-                </li>
-                <li>Using wildcards and ~ (autorun)<br /><br />
-                    <pre class="prettyprint">$ ./sbt
-> ~test-only workshop.part2*Test</pre></li>
-                <li>Continuously run the part1 tests<br /><br />
-                    <pre class="prettyprint">$ ./sbt
-> ~test-only workshop.part1.ComputeActorTest</pre></li>
             </ul>
         </article>
     </slide>
@@ -316,17 +295,6 @@ class GreetingActor(delay: FiniteDuration) extends Actor {
         </article>
     </slide>
 
-    <slide>
-        <hgroup>
-            <h2>Importing project to Eclipse</h2>
-        </hgroup>
-        <article class="large">
-            <ul>
-                <li>Generate Eclipse metadata<br/><br/><pre class="prettyprint">./sbt eclipse</pre>
-                </li>File -> Import -> "Existing project into workspace" -> Select project's basedir</li>
-            </ul>
-        </article>
-    </slide>
 
     <slide>
         <hgroup>
@@ -347,7 +315,7 @@ class GreetingActor(delay: FiniteDuration) extends Actor {
             <section>
                 <ul>
                     <li>Akka enforces parental supervision, which means that each actor is created and supervised by its parent actor.</li>
-                    <li>All actors has a parent.</li>
+                    <li>All actors have a parent.</li>
                     <li>Fault-tolerant systems that self-heal.</li>
                     <li>If one actor carries very important data, this actor should source out any possibly dangerous sub-tasks to children it supervises and handle failures of these children as appropriate.</li>
                 </ul>
@@ -506,8 +474,8 @@ class DeathWatchActor extends Actor {
             <h2>What happens on an actor restart</h2>
         </hgroup>
         <article>
-            <p><a href="http://doc.akka.io/docs/akka/2.3.9/general/supervision.html#what-restarting-means">What restarting means</a></p>
-            <p><a href="http://doc.akka.io/docs/akka/2.3.9/scala/actors.html#Actor_Lifecycle">Actor Lifecycle</a></p>
+            <p><a href="http://doc.akka.io/docs/akka/2.4.19/general/supervision.html#what-restarting-means">What restarting means</a></p>
+            <p><a href="http://doc.akka.io/docs/akka/2.4.19/scala/actors.html#Actor_Lifecycle">Actor Lifecycle</a></p>
         </article>
     </slide>
 
@@ -552,8 +520,8 @@ class DeathWatchActor extends Actor {
             <ul>
                 <li>Docs:
                     <ul>
-                        <li>Creating a Supervisor Strategy<a style="margin-left: 1em" href="http://doc.akka.io/docs/akka/2.3.9/java/lambda-fault-tolerance.html#Creating_a_Supervisor_Strategy">Java</a>|<a href="http://doc.akka.io/docs/akka/2.3.9/scala/fault-tolerance.html#Creating_a_Supervisor_Strategy">Scala</a></li>
-                        <li>Lifecycle Monitoring aka DeathWatch<a style="margin-left: 1em" href="http://doc.akka.io/docs/akka/2.3.9/java/untyped-actors.html#Lifecycle_Monitoring_aka_DeathWatch">Java</a>|<a href="http://doc.akka.io/docs/akka/2.3.9/scala/actors.html#Lifecycle_Monitoring_aka_DeathWatch">Scala</a></li>
+                        <li><a style="margin-left: 1em" href="http://doc.akka.io/docs/akka/2.3.9/java/lambda-fault-tolerance.html#Creating_a_Supervisor_Strategy">Creating a Supervisor Strategy</a></li>
+                        <li><a style="margin-left: 1em" href="http://doc.akka.io/docs/akka/2.3.9/java/untyped-actors.html#Lifecycle_Monitoring_aka_DeathWatch">Lifecycle Monitoring aka DeathWatch</a></li>
                     </ul>
                 </li>
             </ul>
@@ -635,8 +603,8 @@ object ComputeRouterExample extends App {
                     <ul>
                         <li>Create multiple actors (one for each unit of work)</li>
 
-                        <li>Use a router<a style="margin-left: 1em" href="http://doc.akka.io/docs/akka/2.3.9/java/routing.html">Java</a>|<a href="http://doc.akka.io/docs/akka/2.3.9/scala/routing.html">Scala</a></li>
-                        <li>Use futures<a style="margin-left: 1em" href="http://doc.akka.io/docs/akka/2.3.9/java/futures.html">Java</a>|<a href="http://doc.akka.io/docs/akka/2.3.9/scala/futures.html">Scala</a></li>
+                        <li><a style="margin-left: 1em" href="http://doc.akka.io/docs/akka/2.4.19/java/routing.html">Use a router</a></li>
+                        <li><a style="margin-left: 1em" href="http://doc.akka.io/docs/akka/2.4.19/java/futures.html">Use futures</a></li>
                     </ul>
                 </li>
             </ul>
