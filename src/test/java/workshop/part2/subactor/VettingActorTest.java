@@ -41,9 +41,9 @@ public class VettingActorTest extends AkkaTest {
         fraudWordActor.expectMsgClass(FraudWordActor.ExamineWords.class);
         fraudWordActor.reply(new ExamineWordsResult(List.empty()));
 
-        Verdict verdict = sender.expectMsgClass(Verdict.class);
+        Verdict.VerdictType verdict = sender.expectMsgClass(Verdict.VerdictType.class);
 
-        assertThat(verdict, is(Verdict.GOOD));
+        assertThat(verdict, is(Verdict.VerdictType.GOOD));
     }
 
     @Test
@@ -56,9 +56,9 @@ public class VettingActorTest extends AkkaTest {
         fraudWordActor.expectMsgClass(FraudWordActor.ExamineWords.class);
         fraudWordActor.reply(new ExamineWordsResult(List.of(new FraudWord("westernunion"))));
 
-        Verdict verdict = sender.expectMsgClass(Verdict.class);
+        Verdict.VerdictType verdict = sender.expectMsgClass(Verdict.VerdictType.class);
 
-        assertThat(verdict, is(Verdict.BAD));
+        assertThat(verdict, is(Verdict.VerdictType.BAD));
     }
 
     @Test
@@ -71,9 +71,9 @@ public class VettingActorTest extends AkkaTest {
         fraudWordActor.expectMsgClass(FraudWordActor.ExamineWords.class);
         fraudWordActor.reply(new ExamineWordsResult(List.empty()));
 
-        Verdict verdict = sender.expectMsgClass(Verdict.class);
+        Verdict.VerdictType verdict = sender.expectMsgClass(Verdict.VerdictType.class);
 
-        assertThat(verdict, is(Verdict.BAD));
+        assertThat(verdict, is(Verdict.VerdictType.BAD));
     }
 
     @Test
@@ -85,7 +85,7 @@ public class VettingActorTest extends AkkaTest {
         schedule(Duration.create(100, TimeUnit.MILLISECONDS), vettingActor, new CheckUserResult(UserCriminalRecord.GOOD));
         schedule(Duration.create(100, TimeUnit.MILLISECONDS), vettingActor, new ExamineWordsResult(List.empty()));
 
-        assertThat(sender.expectMsgClass(Verdict.class), is(Verdict.UNKNOWN));
+        assertThat(sender.expectMsgClass(Verdict.VerdictType.class), is(Verdict.VerdictType.PENDING));
     }
 
     @Test
@@ -100,7 +100,7 @@ public class VettingActorTest extends AkkaTest {
         fraudWordActor.expectMsgClass(FraudWordActor.ExamineWords.class);
         fraudWordActor.reply(new ExamineWordsResult(List.empty()));
 
-        sender.expectMsgClass(Verdict.class);
+        sender.expectMsgClass(Verdict.VerdictType.class);
         sender.expectMsgClass(Terminated.class);
     }
 
@@ -116,7 +116,7 @@ public class VettingActorTest extends AkkaTest {
         fraudWordActor.expectMsgClass(FraudWordActor.ExamineWords.class);
         fraudWordActor.reply(new ExamineWordsResult(List.of(new FraudWord("westernunion"))));
 
-        sender.expectMsgClass(Verdict.class);
+        sender.expectMsgClass(Verdict.VerdictType.class);
         sender.expectMsgClass(Terminated.class);
     }
 
@@ -129,7 +129,7 @@ public class VettingActorTest extends AkkaTest {
         schedule(Duration.create(100, TimeUnit.MILLISECONDS), vettingActor, new CheckUserResult(UserCriminalRecord.GOOD));
         schedule(Duration.create(100, TimeUnit.MILLISECONDS), vettingActor, new ExamineWordsResult(List.empty()));
 
-        sender.expectMsgClass(Verdict.class);
+        sender.expectMsgClass(Verdict.VerdictType.class);
         sender.expectMsgClass(Terminated.class);
     }
 

@@ -71,8 +71,8 @@ public class VettingSupervisorTest extends AkkaTest {
             vettingActor.tell(createAd(2), testActor());
 
             within(duration("3 seconds"), () -> {
-                assertThat(expectMsgClass(Verdict.class), is(Verdict.GOOD));
-                assertThat(expectMsgClass(Verdict.class), is(Verdict.GOOD));
+                assertThat(expectMsgClass(Verdict.VerdictType.class), is(Verdict.VerdictType.GOOD));
+                assertThat(expectMsgClass(Verdict.VerdictType.class), is(Verdict.VerdictType.GOOD));
 
                 return null;
             });

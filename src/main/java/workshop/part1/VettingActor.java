@@ -37,7 +37,7 @@ public class VettingActor extends AbstractActor {
     public PartialFunction<Object, BoxedUnit> receive() {
         return ReceiveBuilder.create()
             .match(Ad.class, ad -> {
-                Verdict verdict = performVetting(ad);
+                Verdict.VerdictType verdict = performVetting(ad);
                 numVettedAds += 1;
                 sender().tell(verdict, self());
             })
@@ -49,18 +49,18 @@ public class VettingActor extends AbstractActor {
             .build();
     }
 
-    private Verdict performVetting(Ad ad) {
+    private Verdict.VerdictType performVetting(Ad ad) {
         UserCriminalRecord record = userService.vettUser(ad.userId);
         List<FraudWord> fraudWords = fraudWordService.examineWords(ad.toAdWords());
 
         return toVerdictStatus(record, fraudWords);
     }
 
-    private Verdict toVerdictStatus(UserCriminalRecord record, List<FraudWord> fraudWords) {
+    private Verdict.VerdictType toVerdictStatus(UserCriminalRecord record, List<FraudWord> fraudWords) {
         if (record == UserCriminalRecord.GOOD && fraudWords.isEmpty()) {
-            return Verdict.GOOD;
+            return Verdict.VerdictType.GOOD;
         } else {
-            return Verdict.BAD;
+            return Verdict.VerdictType.BAD;
         }
     }
 

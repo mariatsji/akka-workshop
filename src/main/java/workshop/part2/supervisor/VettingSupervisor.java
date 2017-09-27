@@ -18,7 +18,7 @@ public class VettingSupervisor extends AbstractActor {
 
     private final VettingActorFactory vettingActorFactory;
 
-    VettingSupervisor(VettingActorFactory vettingActorFactory) {
+    public VettingSupervisor(VettingActorFactory vettingActorFactory) {
         this.vettingActorFactory = vettingActorFactory;
     }
 

@@ -5,8 +5,7 @@ Arild
 
 Sjur
 - Align exercise part 1 - part 3 with actual tasks
-- Hosting slides - want a link
-- flytte http front til part 3
+- tester på http front
 - ruter i part 2 + test + sjekke om mulig å kombinere ruter og death watch (sjekk legacy workshop, dynamisk pool size)
 - kotlin-eksmpler i repoet + java-eksmpler i repoet - kopier fra legacy workshop (scala-eksmpler i slides)
 - Sende ut epost / innkalling til workshop

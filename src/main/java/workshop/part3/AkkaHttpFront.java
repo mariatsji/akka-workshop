@@ -24,8 +24,11 @@ import scala.concurrent.Future;
 import workshop.common.ad.Ad;
 import workshop.common.fraudwordsservice.FraudWordService;
 import workshop.common.userservice.UserService;
-import workshop.part3.subactor.VettingActorFactory;
-import workshop.part3.subactor.VettingSupervisor;
+import workshop.part1.Verdict;
+import workshop.part2.FraudWordActor;
+import workshop.part2.UserActor;
+import workshop.part2.supervisor.VettingActorFactory;
+import workshop.part2.supervisor.VettingSupervisor;
 
 import static akka.http.javadsl.server.PathMatchers.longSegment;
 

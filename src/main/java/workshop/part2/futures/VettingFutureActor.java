@@ -50,12 +50,12 @@ public class VettingFutureActor extends AbstractActor {
                 Future<Boolean> userOk = userFuture.map(result -> result.record == UserCriminalRecord.GOOD, ec);
                 Future<Boolean> fraudWordsOk = fraudWordFuture.map(result -> result.fraudWords.isEmpty(), ec);
 
-                Future<Verdict> verdict = Futures.reduce(List.of(userOk, fraudWordsOk),
+                Future<Verdict.VerdictType> verdict = Futures.reduce(List.of(userOk, fraudWordsOk),
                     (Function2<Boolean, Boolean, Boolean>) (result, current) -> result && current, ec)
-                    .map(result -> result ? Verdict.GOOD : Verdict.BAD, ec)
-                    .recover(new Recover<Verdict>() {
-                        public Verdict recover(Throwable problem) throws Throwable {
-                            return Verdict.UNKNOWN;
+                    .map(result -> result ? Verdict.VerdictType.GOOD : Verdict.VerdictType.BAD, ec)
+                    .recover(new Recover<Verdict.VerdictType>() {
+                        public Verdict.VerdictType recover(Throwable problem) throws Throwable {
+                            return Verdict.VerdictType.PENDING;
                         }
                     }, ec);
 

@@ -55,19 +55,19 @@ public class VettingActor extends AbstractActor {
                     examineWordsResult = m;
                 }
             })
-            .match(TimeoutVetting.class, m -> sendVerdictAndTerminateSelf(Verdict.UNKNOWN, sender))
+            .match(TimeoutVetting.class, m -> sendVerdictAndTerminateSelf(Verdict.VerdictType.PENDING, sender))
             .build();
     }
 
-    private Verdict toVerdictStatus(UserCriminalRecord record, List<FraudWord> fraudWords) {
+    private Verdict.VerdictType toVerdictStatus(UserCriminalRecord record, List<FraudWord> fraudWords) {
         if (record == UserCriminalRecord.GOOD && fraudWords.isEmpty()) {
-            return Verdict.GOOD;
+            return Verdict.VerdictType.GOOD;
         } else {
-            return Verdict.BAD;
+            return Verdict.VerdictType.BAD;
         }
     }
 
-    private void sendVerdictAndTerminateSelf(Verdict verdict, ActorRef receiver) {
+    private void sendVerdictAndTerminateSelf(Verdict.VerdictType verdict, ActorRef receiver) {
         receiver.tell(verdict, self());
         context().stop(self());
     }
