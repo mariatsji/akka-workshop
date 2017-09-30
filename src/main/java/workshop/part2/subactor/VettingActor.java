@@ -2,6 +2,7 @@ package workshop.part2.subactor;
 
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
+import akka.actor.Terminated;
 import akka.japi.pf.ReceiveBuilder;
 import javaslang.collection.List;
 import scala.PartialFunction;
@@ -32,6 +33,11 @@ public class VettingActor extends AbstractActor {
     }
 
     @Override
+    public void preStart() throws Exception {
+        context().watch(userActor);
+    }
+
+    @Override
     public PartialFunction<Object, BoxedUnit> receive() {
         return ReceiveBuilder.create()
             .match(Ad.class, ad -> {
@@ -56,6 +62,7 @@ public class VettingActor extends AbstractActor {
                 }
             })
             .match(TimeoutVetting.class, m -> sendVerdictAndTerminateSelf(Verdict.VerdictType.PENDING, sender))
+            .match(Terminated.class, m -> sendVerdictAndTerminateSelf(Verdict.VerdictType.PENDING, sender))
             .build();
     }
 

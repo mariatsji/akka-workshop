@@ -2,6 +2,7 @@ package workshop.part2.subactor;
 
 import java.util.concurrent.TimeUnit;
 
+import akka.actor.PoisonPill;
 import akka.actor.Props;
 import akka.actor.Terminated;
 import akka.testkit.TestActorRef;
@@ -77,13 +78,26 @@ public class VettingActorTest extends AkkaTest {
     }
 
     @Test
-    public void replaysWithUnknownVerdictWhenVettingTimeoutReached() {
+    public void repliesWithPendingVerdictWhenVettingTimeoutReached() {
         TestActorRef<VettingActor> vettingActor = createVettingActor(Duration.create(0, TimeUnit.MILLISECONDS));
 
         sender.send(vettingActor, createAd());
 
         schedule(Duration.create(100, TimeUnit.MILLISECONDS), vettingActor, new CheckUserResult(UserCriminalRecord.GOOD));
         schedule(Duration.create(100, TimeUnit.MILLISECONDS), vettingActor, new ExamineWordsResult(List.empty()));
+
+        assertThat(sender.expectMsgClass(Verdict.VerdictType.class), is(Verdict.VerdictType.PENDING));
+    }
+
+    @Test
+    public void repliesWithPendingVerdictWhenUserActorTerminates() {
+        FiniteDuration avoidTriggerTimeout = Duration.create(1, TimeUnit.DAYS);
+
+        TestActorRef<VettingActor> vettingActor = createVettingActor(avoidTriggerTimeout);
+
+        sender.watch(vettingActor);
+        sender.send(vettingActor, createAd());
+        userActor.send(userActor.ref(), PoisonPill.getInstance());
 
         assertThat(sender.expectMsgClass(Verdict.VerdictType.class), is(Verdict.VerdictType.PENDING));
     }
@@ -128,6 +142,20 @@ public class VettingActorTest extends AkkaTest {
 
         schedule(Duration.create(100, TimeUnit.MILLISECONDS), vettingActor, new CheckUserResult(UserCriminalRecord.GOOD));
         schedule(Duration.create(100, TimeUnit.MILLISECONDS), vettingActor, new ExamineWordsResult(List.empty()));
+
+        sender.expectMsgClass(Verdict.VerdictType.class);
+        sender.expectMsgClass(Terminated.class);
+    }
+
+    @Test
+    public void terminatesAfterUserActorTerminates() {
+        FiniteDuration avoidTriggerTimeout = Duration.create(1, TimeUnit.DAYS);
+        TestActorRef<VettingActor> vettingActor = createVettingActor(avoidTriggerTimeout);
+
+        sender.watch(vettingActor);
+        sender.send(vettingActor, createAd());
+
+        userActor.send(userActor.ref(), PoisonPill.getInstance());
 
         sender.expectMsgClass(Verdict.VerdictType.class);
         sender.expectMsgClass(Terminated.class);
