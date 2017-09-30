@@ -83,7 +83,7 @@ class VettingFutureActorTest : AkkaTest() {
         schedule(Duration.create(500, TimeUnit.MILLISECONDS), vettingActor, CheckUserResult(UserCriminalRecord.GOOD))
         schedule(Duration.create(500, TimeUnit.MILLISECONDS), vettingActor, ExamineWordsResult(emptyList()))
 
-        assertThat(sender.expectMsgClass(Verdict::class.java), `is`(Verdict.UNKNOWN))
+        assertThat(sender.expectMsgClass(Verdict::class.java), `is`(Verdict.PENDING))
     }
 
     private fun createAd(): Ad {

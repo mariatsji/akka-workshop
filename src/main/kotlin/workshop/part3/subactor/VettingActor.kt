@@ -42,7 +42,7 @@ class VettingActor(private val userActor: ActorRef,
                 examineWordsResult = msg
             }
         }
-        is TimeoutVetting -> sendVerdictAndTerminateSelf(Verdict.UNKNOWN, senderSaved)
+        is TimeoutVetting -> sendVerdictAndTerminateSelf(Verdict.PENDING, senderSaved)
         else -> unhandled(msg)
     }
 

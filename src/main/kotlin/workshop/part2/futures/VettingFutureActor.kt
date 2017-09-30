@@ -41,7 +41,7 @@ class VettingFutureActor internal constructor(private val userActor: ActorRef, p
                             .map({ result -> if (result) Verdict.GOOD else Verdict.BAD }, ec)
                             .recover(object : Recover<Verdict>() {
                                 override fun recover(problem: Throwable): Verdict {
-                                    return Verdict.UNKNOWN
+                                    return Verdict.PENDING
                                 }
                             }, ec)
 

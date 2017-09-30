@@ -1,11 +1,12 @@
 package workshop.part2.subactor
 
+import akka.actor.PoisonPill
 import akka.actor.Props
 import akka.actor.Terminated
 import akka.testkit.TestActorRef
 import akka.testkit.TestProbe
-import org.hamcrest.core.Is.`is`
-import org.junit.Assert.assertThat
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.runners.MockitoJUnitRunner
@@ -40,7 +41,7 @@ class VettingActorTest : AkkaTest() {
 
         val verdict = sender.expectMsgClass(Verdict::class.java)
 
-        assertThat(verdict, `is`(Verdict.GOOD))
+        assertThat(verdict, equalTo(Verdict.GOOD))
     }
 
     @Test
@@ -55,7 +56,7 @@ class VettingActorTest : AkkaTest() {
 
         val verdict = sender.expectMsgClass(Verdict::class.java)
 
-        assertThat(verdict, `is`(Verdict.BAD))
+        assertThat(verdict, equalTo(Verdict.BAD))
     }
 
     @Test
@@ -70,11 +71,11 @@ class VettingActorTest : AkkaTest() {
 
         val verdict = sender.expectMsgClass(Verdict::class.java)
 
-        assertThat(verdict, `is`(Verdict.BAD))
+        assertThat(verdict, equalTo(Verdict.BAD))
     }
 
     @Test
-    fun repliesWithUnknownVerdictWhenVettingTimeoutReached() {
+    fun repliesWithPendingVerdictWhenVettingTimeoutReached() {
         val vettingActor = createVettingActor(Duration.create(0, TimeUnit.MILLISECONDS))
 
         sender.send(vettingActor, createAd())
@@ -82,7 +83,20 @@ class VettingActorTest : AkkaTest() {
         schedule(Duration.create(100, TimeUnit.MILLISECONDS), vettingActor, CheckUserResult(UserCriminalRecord.GOOD))
         schedule(Duration.create(100, TimeUnit.MILLISECONDS), vettingActor, ExamineWordsResult(emptyList()))
 
-        assertThat(sender.expectMsgClass(Verdict::class.java), `is`(Verdict.UNKNOWN))
+        assertThat(sender.expectMsgClass(Verdict::class.java), equalTo(Verdict.PENDING))
+    }
+
+    @Test
+    fun repliesWithPendingVerdictWhenUserActorTerminates() {
+        val avoidTriggerTimeout = Duration.create(1, TimeUnit.DAYS)
+
+        val vettingActor = createVettingActor(avoidTriggerTimeout)
+
+        sender.watch(vettingActor)
+        sender.send(vettingActor, createAd())
+        userActor.send(userActor.ref(), PoisonPill.getInstance())
+
+        assertThat(sender.expectMsgClass(Verdict::class.java), equalTo(Verdict.PENDING))
     }
 
     @Test
@@ -125,6 +139,20 @@ class VettingActorTest : AkkaTest() {
 
         schedule(Duration.create(100, TimeUnit.MILLISECONDS), vettingActor, CheckUserResult(UserCriminalRecord.GOOD))
         schedule(Duration.create(100, TimeUnit.MILLISECONDS), vettingActor, ExamineWordsResult(emptyList()))
+
+        sender.expectMsgClass(Verdict::class.java)
+        sender.expectMsgClass(Terminated::class.java)
+    }
+
+    @Test
+    fun terminatesAfterUserActorTerminates() {
+        val avoidTriggerTimeout = Duration.create(1, TimeUnit.DAYS)
+        val vettingActor = createVettingActor(avoidTriggerTimeout)
+
+        sender.watch(vettingActor)
+        sender.send(vettingActor, createAd())
+
+        userActor.send(userActor.ref(), PoisonPill.getInstance())
 
         sender.expectMsgClass(Verdict::class.java)
         sender.expectMsgClass(Terminated::class.java)
