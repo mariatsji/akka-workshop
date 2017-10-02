@@ -6,8 +6,6 @@ import akka.testkit.TestActor;
 import akka.testkit.TestKit;
 import javaslang.collection.List;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
 import workshop.common.ad.Ad;
 import workshop.common.userservice.UserCriminalRecord;
 import workshop.part1.AkkaTest;
@@ -20,7 +18,6 @@ import static akka.testkit.JavaTestKit.duration;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-@RunWith(MockitoJUnitRunner.class)
 public class VettingSupervisorIntegrationTest extends AkkaTest {
 
     @Test

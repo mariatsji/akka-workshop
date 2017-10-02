@@ -6,8 +6,6 @@ import akka.actor.SupervisorStrategy;
 import akka.testkit.TestActorRef;
 import akka.testkit.TestProbe;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
 import workshop.common.ad.Ad;
 import workshop.part1.AkkaTest;
 import workshop.part1.Verdict.VerdictType;
@@ -20,7 +18,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class VettingSupervisorTest extends AkkaTest {
 
     @Test
@@ -82,7 +79,7 @@ public class VettingSupervisorTest extends AkkaTest {
             .underlyingActor()
             .supervisorStrategy()
             .decider()
-            .apply(new RuntimeException("test exception"));
+            .apply(new RuntimeException("other exception"));
 
         assertThat(strategy, is(SupervisorStrategy.escalate()));
     }
