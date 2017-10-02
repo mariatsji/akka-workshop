@@ -25,10 +25,10 @@ import workshop.common.ad.Ad;
 import workshop.common.fraudwordsservice.FraudWordService;
 import workshop.common.userservice.UserService;
 import workshop.part1.Verdict;
-import workshop.part2.FraudWordActor;
-import workshop.part2.UserActor;
-import workshop.part2.supervisor.VettingActorFactory;
-import workshop.part2.supervisor.VettingSupervisor;
+import workshop.part2a.VettingActorFactory;
+import workshop.part2a.VettingSupervisor;
+import workshop.part2b.FraudWordActor;
+import workshop.part2b.UserActor;
 
 import static akka.http.javadsl.server.PathMatchers.longSegment;
 
