@@ -1,4 +1,4 @@
-package workshop.part2
+package workshop.part2b
 
 import akka.actor.UntypedActor
 import workshop.common.userservice.UserCriminalRecord

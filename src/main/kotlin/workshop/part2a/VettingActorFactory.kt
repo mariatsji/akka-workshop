@@ -1,10 +1,10 @@
-package workshop.part2.supervisor
+package workshop.part2a
 
 import akka.actor.ActorContext
 import akka.actor.ActorRef
 import akka.actor.Props
 import scala.concurrent.duration.Duration
-import workshop.part2.subactor.VettingActor
+import workshop.part2b.subactor.VettingActor
 import java.util.concurrent.TimeUnit
 
 class VettingActorFactory(private val userActor: ActorRef, private val fraudWordActor: ActorRef) {

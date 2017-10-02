@@ -1,10 +1,9 @@
-package workshop.part2.supervisor
+package workshop.part2a
 
 import akka.actor.AbstractActor
 import akka.actor.OneForOneStrategy
 import akka.actor.SupervisorStrategy
-import akka.actor.SupervisorStrategy.escalate
-import akka.actor.SupervisorStrategy.restart
+import akka.actor.SupervisorStrategy.*
 import akka.japi.pf.DeciderBuilder
 import akka.japi.pf.ReceiveBuilder
 import scala.PartialFunction
@@ -17,6 +16,7 @@ class VettingSupervisor internal constructor(private val vettingActorFactory: Ve
 
     override fun supervisorStrategy(): SupervisorStrategy {
         return OneForOneStrategy(10, Duration.create(1, MINUTES), DeciderBuilder
+                .match(UserNotFoundException::class.java) { resume() }
                 .match(NullPointerException::class.java) { restart() }
                 .matchAny { escalate() }
                 .build())

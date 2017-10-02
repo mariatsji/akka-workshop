@@ -1,4 +1,4 @@
-package workshop.part2.futures
+package workshop.part2b.futures
 
 import akka.actor.AbstractActor
 import akka.actor.ActorRef
@@ -15,10 +15,10 @@ import scala.runtime.BoxedUnit
 import workshop.common.ad.Ad
 import workshop.common.userservice.UserCriminalRecord
 import workshop.part1.Verdict
-import workshop.part2.FraudWordActor.ExamineWords
-import workshop.part2.FraudWordActor.ExamineWordsResult
-import workshop.part2.UserActor.CheckUser
-import workshop.part2.UserActor.CheckUserResult
+import workshop.part2b.FraudWordActor.ExamineWords
+import workshop.part2b.FraudWordActor.ExamineWordsResult
+import workshop.part2b.UserActor.CheckUser
+import workshop.part2b.UserActor.CheckUserResult
 
 class VettingFutureActor internal constructor(private val userActor: ActorRef, private val fraudWordActor: ActorRef, private val timeoutVetting: FiniteDuration) : AbstractActor() {
 
