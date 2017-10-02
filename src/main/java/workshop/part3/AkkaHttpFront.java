@@ -7,20 +7,25 @@ import akka.NotUsed;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
+import akka.dispatch.ExecutionContexts;
+import akka.dispatch.Futures;
 import akka.http.javadsl.ConnectHttp;
 import akka.http.javadsl.Http;
 import akka.http.javadsl.ServerBinding;
 import akka.http.javadsl.marshallers.jackson.Jackson;
 import akka.http.javadsl.model.HttpRequest;
 import akka.http.javadsl.model.HttpResponse;
-import akka.http.javadsl.model.StatusCodes;
 import akka.http.javadsl.server.AllDirectives;
 import akka.http.javadsl.server.Route;
 import akka.pattern.Patterns;
 import akka.stream.ActorMaterializer;
 import akka.stream.javadsl.Flow;
-import javaslang.control.Option;
+import akka.util.Timeout;
+import scala.concurrent.Await;
 import scala.concurrent.Future;
+import scala.concurrent.duration.Duration;
+import scala.reflect.ClassTag;
+import workshop.common.Utils;
 import workshop.common.ad.Ad;
 import workshop.common.fraudwordsservice.FraudWordService;
 import workshop.common.userservice.UserService;
@@ -29,8 +34,6 @@ import workshop.part2a.VettingActorFactory;
 import workshop.part2a.VettingSupervisor;
 import workshop.part2b.FraudWordActor;
 import workshop.part2b.UserActor;
-
-import static akka.http.javadsl.server.PathMatchers.longSegment;
 
 public class AkkaHttpFront extends AllDirectives {
 
@@ -77,38 +80,27 @@ public class AkkaHttpFront extends AllDirectives {
         }
     }
 
-    private Route createRoute() {
-
+    Route createRoute() {
         return route(
-                get(() ->
-                        pathPrefix("verdict", () ->
-                                path(longSegment(), (Long id) -> {
-                                    final CompletionStage<Option<Verdict>> futureMaybeVerdict = fetchItem(id);
-                                    return onSuccess(() -> futureMaybeVerdict, maybeVerdict ->
-                                            maybeVerdict.map(verdict -> completeOK(verdict, Jackson.marshaller()))
-                                                    .getOrElse(() -> complete(StatusCodes.NOT_FOUND, "Not Found"))
-                                    );
-                                }))),
                 post(() ->
                         path("evaluate", () ->
                             entity(Jackson.unmarshaller(Ad.class), ad -> {
-                                CompletionStage<Verdict> futureVetted = performVetting(ad);
-                                return onSuccess(() -> futureVetted, verdict -> completeOK(verdict, Jackson.marshaller()));
+
+                                Future<Verdict.VerdictType> verdictTypeFuture = performVetting(ad);
+                                return onSuccess(
+                                        () -> Utils.toJavaFuture(verdictTypeFuture),
+                                        verdict -> completeOK(verdict, Jackson.marshaller()));
                             })))
         );
     }
 
     // (fake) async database query api
-    private CompletionStage<Option<Verdict>> fetchItem(long itemId) {
-        return CompletableFuture.completedFuture(Option.of(new Verdict(String.valueOf(itemId), Verdict.VerdictType.PENDING)));
+    private Future<Verdict.VerdictType> performVetting(final Ad ad) {
+        return Patterns.ask(vettingSupervisor, ad, 1000)
+                .mapTo(ClassTag.apply(Verdict.VerdictType.class));
     }
 
-    // (fake) async database query api
-    private CompletionStage<Verdict> performVetting(final Ad ad) {
-        Future<Object> ask = Patterns.ask(vettingSupervisor, ad, 1000);//todo
 
-        return CompletableFuture.completedFuture(new Verdict(String.valueOf(ad.getAdId()), Verdict.VerdictType.GOOD));
-    }
 
 
 }
