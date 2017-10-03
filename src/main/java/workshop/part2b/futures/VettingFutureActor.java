@@ -14,6 +14,7 @@ import scala.concurrent.ExecutionContextExecutor;
 import scala.concurrent.Future;
 import scala.concurrent.duration.FiniteDuration;
 import scala.reflect.ClassTag;
+import scala.reflect.ClassTag$;
 import scala.runtime.BoxedUnit;
 import workshop.common.ad.Ad;
 import workshop.common.userservice.UserCriminalRecord;
@@ -39,10 +40,10 @@ public class VettingFutureActor extends AbstractActor {
         return ReceiveBuilder.create()
             .match(Ad.class, ad -> {
                 Future<CheckUserResult> userFuture = Patterns.ask(userActor, new CheckUser(ad.userId), new Timeout(timeoutVetting))
-                    .mapTo(ClassTag.apply(CheckUserResult.class));
+                    .mapTo(ClassTag$.MODULE$.apply(CheckUserResult.class));
 
                 Future<FraudWordActor.ExamineWordsResult> fraudWordFuture = Patterns.ask(fraudWordActor, new FraudWordActor.ExamineWords(ad.toAdWords()), new Timeout(timeoutVetting))
-                    .mapTo(ClassTag.apply(FraudWordActor.ExamineWordsResult.class));
+                    .mapTo(ClassTag$.MODULE$.apply(FraudWordActor.ExamineWordsResult.class));
 
                 ExecutionContextExecutor ec = context().system().dispatcher();
 

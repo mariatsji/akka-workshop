@@ -1,6 +1,7 @@
 package workshop.common;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 
 import akka.dispatch.ExecutionContexts;
 import akka.japi.JavaPartialFunction;
@@ -15,7 +16,7 @@ public class Utils {
      * @param <T> the wrapped value
      * @return a java future
      */
-    public static <T> CompletableFuture<T> toJavaFuture(Future<T> scalaFuture) {
+    public static <T> CompletionStage<T> toJavaFuture(Future<T> scalaFuture) {
         CompletableFuture<T> completableFuture = new CompletableFuture<>();
 
         // happy path
