@@ -29,7 +29,6 @@ public class AkkaHttpServer {
 
     public static final String HOST_BINDING = "localhost";
     public static final int PORT = 8080;
-    HttpRoutes httpRoutes = new HttpRoutes();
 
     private ActorRef vettingSupervisor;
 
@@ -45,19 +44,21 @@ public class AkkaHttpServer {
 
         ActorRef userActor = system.actorOf(Props.create(UserActor.class, () -> new UserActor(new UserService())));
         ActorRef fraudWordActor = system.actorOf(Props.create(FraudWordActor.class, () -> new FraudWordActor(new FraudWordService())));
+
         vettingSupervisor = system.actorOf(Props.create(VettingSupervisor.class, () -> new VettingSupervisor(new VettingActorFactory(userActor, fraudWordActor))));
 
         final Http http = Http.get(system);
+
         final ActorMaterializer materializer = ActorMaterializer.create(system);
 
-        Flow<HttpRequest, HttpResponse, NotUsed> flow = httpRoutes.createRoutes().flow(system, materializer);
+        Flow<HttpRequest, HttpResponse, NotUsed> flow = new HttpRoutes(vettingSupervisor).registerRoutes().flow(system, materializer);
 
         CompletionStage<ServerBinding> binding = http.bindAndHandle(flow, ConnectHttp.toHost(
                 HOST_BINDING, PORT), materializer);
 
         System.out.println(String.format("Server online at http://%s:%d/", HOST_BINDING, PORT));
 
-        sleepForSeconds(1000);
+        sleepForSeconds(24 * 60 * 60 * 1000);
 
         binding
                 .thenCompose(ServerBinding::unbind)

@@ -24,7 +24,7 @@ public class Verdict {
     }
 
     public enum VerdictType {
-        GOOD, BAD, PENDING
+        GOOD, BAD, PENDING, FAILURE
     }
 }
 
