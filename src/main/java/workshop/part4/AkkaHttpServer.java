@@ -11,15 +11,10 @@ import akka.http.javadsl.Http;
 import akka.http.javadsl.ServerBinding;
 import akka.http.javadsl.model.HttpRequest;
 import akka.http.javadsl.model.HttpResponse;
-import akka.pattern.Patterns;
 import akka.stream.ActorMaterializer;
 import akka.stream.javadsl.Flow;
-import scala.concurrent.Future;
-import scala.reflect.ClassTag$;
-import workshop.common.ad.Ad;
 import workshop.common.fraudwordsservice.FraudWordService;
 import workshop.common.userservice.UserService;
-import workshop.part1.Verdict;
 import workshop.part2a.VettingActorFactory;
 import workshop.part2a.VettingSupervisor;
 import workshop.part2b.FraudWordActor;
@@ -58,7 +53,7 @@ public class AkkaHttpServer {
 
         System.out.println(String.format("Server online at http://%s:%d/", HOST_BINDING, PORT));
 
-        sleepForSeconds(24 * 60 * 60 * 1000);
+        sleepForSeconds(24 * 60 * 60);
 
         binding
                 .thenCompose(ServerBinding::unbind)
@@ -66,21 +61,7 @@ public class AkkaHttpServer {
     }
 
     private static void sleepForSeconds(int seconds) {
-        try {
-            Thread.sleep(seconds * 1000);
-        } catch (Exception i) {
-        }
+        try { Thread.sleep(seconds * 1000); } catch (Exception i) { }
     }
-
-
-
-    // (fake) async database query api
-    private Future<Verdict.VerdictType> performVetting(final Ad ad) {
-        return Patterns.ask(vettingSupervisor, ad, 1000)
-                .mapTo(ClassTag$.MODULE$.apply(Verdict.VerdictType.class));
-    }
-
-
-
 
 }
