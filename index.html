@@ -79,8 +79,9 @@ URL: https://code.google.com/p/io-2012-slides
         <article class="large">
             <ul>
                 <li>Part 1 - Creating actors and sending messages</li>
-                <li>Part 2 - Actor supervision and death watch</li>
-                <li>Part 3 - Routers</li>
+                <li>Part 2a - Actor supervision and death watch</li>
+                <li>Part 2b - Messaging patterns</li>
+                <li>Part 3  - Akka HTTP</li>
             </ul>
         </article>
     </slide>
@@ -111,8 +112,9 @@ URL: https://code.google.com/p/io-2012-slides
         <article class="large">
             <ul>
                 <li class="outlineHighlight">Part 1 - Creating actors and sending messages</li>
-                <li>Part 2 - Actor supervision and death watch</li>
-                <li>Part 3 - Routers</li>
+                <li>Part 2a - Actor supervision and death watch</li>
+                <li>Part 2b - Messaging patterns</li>
+                <li>Part 3 - Akka HTTP</li>
             </ul>
         </article>
     </slide>
@@ -173,7 +175,7 @@ object GreetingActor extends App {
   greetingActor ! "Hulk Hogan"
 }</pre>
         </article>
-        <span class="example">GreetingActor_1.java|scala</span>
+        <span class="example">GreetingActor_1.java|kt</span>
     </slide>
 
 
@@ -209,7 +211,7 @@ object GreetingActor extends App {
   greetingActor ! SayHello("Pope Benedict")
 }</pre>
             </article>
-        <span class="example">GreetingActor_2.java|scala</span>
+        <span class="example">GreetingActor_2.java|kt</span>
     </slide>
 
 
@@ -253,7 +255,7 @@ class GreetingActor(delay: FiniteDuration) extends Actor {
   }
 }</pre>
         </article>
-        <span class="example">GreetingActor_3.java|scala</span>
+        <span class="example">GreetingActor_3.java|kt</span>
     </slide>
 
 
@@ -303,12 +305,24 @@ class GreetingActor(delay: FiniteDuration) extends Actor {
         <article class="large">
             <ul>
                 <li>Part 1 - Creating actors and sending messages</li>
-                <li class="outlineHighlight">Part 2 - Actor supervision and death watch</li>
-                <li>Part 3 - Routers</li>
+                <li class="outlineHighlight">Part 2a - Actor supervision and death watch</li>
+                <li>Part 2b - Messaging patterns</li>
+                <li>Part 3 - Akka HTTP</li>
             </ul>
         </article>
     </slide>
 
+    <slide>
+        <hgroup>
+            <h2>Part 2 - Overview</h2>
+        </hgroup>
+        <article>
+            <br>
+            <p class="flexbox vcenter">
+                <img src="figures/workshop-architecture.png" style="max-height: 430px" />
+            </p>
+        </article>
+    </slide>
 
     <slide>
         <aside class="note">
@@ -377,7 +391,7 @@ class Supervisor extends Actor {
     }
 }</pre>
         </article>
-        <span class="example">SupervisorActor.java|scala</span>
+        <span class="example">SupervisorActor.java|kt</span>
     </slide>
 
 
@@ -410,7 +424,7 @@ class DeathWatchActor extends Actor {
   }
 }</pre>
         </article>
-        <span class="example">DeathWatchActor.java|scala</span>
+        <span class="example">DeathWatchActor.java|kt</span>
     </slide>
 
 
@@ -465,7 +479,7 @@ class DeathWatchActor extends Actor {
   }
 }</pre>
         </article>
-        <span class="example">LifeCycleActor.java|scala</span>
+        <span class="example">LifeCycleActor.java|kt</span>
     </slide>
 
 
@@ -480,40 +494,15 @@ class DeathWatchActor extends Actor {
     </slide>
 
 
-
     <slide>
         <hgroup>
-            <h2>Part 2 - Architecture</h2>
-        </hgroup>
-        <article>
-            <br>
-            <p class="flexbox vcenter">
-                <img src="figures/workshop-architecture.png" style="max-height: 430px" />
-            </p>
-        </article>
-    </slide>
-
-
-    <slide>
-        <hgroup>
-            <h2>Part 2 - Exercises</h2>
+            <h2>Part 2a - Exercises</h2>
         </hgroup>
         <article class="large">
+
             <ul>
-                <li>
-                    <h3>Supervision</h3>
-                    <ul>
-                        <li>Implement ComputeSupervisor</li>
-                        <li>Make tests in ComputeSupervisorTest green</li>
-                    </ul>
-                </li>
-                <li>
-                    <h3>Death Watch</h3>
-                    <ul>
-                        <li>Implement ClientActor</li>
-                        <li>Make tests in ClientActorTest green</li>
-                    </ul>
-                </li>
+                <li>Implement VettingSupervisor</li>
+                <li>Make tests in VettingSupervisorTest green</li>
             </ul>
 
             <br>
@@ -521,7 +510,6 @@ class DeathWatchActor extends Actor {
                 <li>Docs:
                     <ul>
                         <li><a style="margin-left: 1em" href="http://doc.akka.io/docs/akka/2.3.9/java/lambda-fault-tolerance.html#Creating_a_Supervisor_Strategy">Creating a Supervisor Strategy</a></li>
-                        <li><a style="margin-left: 1em" href="http://doc.akka.io/docs/akka/2.3.9/java/untyped-actors.html#Lifecycle_Monitoring_aka_DeathWatch">Lifecycle Monitoring aka DeathWatch</a></li>
                     </ul>
                 </li>
             </ul>
@@ -535,21 +523,14 @@ class DeathWatchActor extends Actor {
         <article class="large">
             <ul>
                 <li>Part 1 - Creating actors and sending messages</li>
-                <li>Part 2 - Actor supervision and death watch</li>
-                <li class="outlineHighlight">Part 3 - Routers</li>
+                <li>Part 2a - Actor supervision and death watch</li>
+                <li class="outlineHighlight">Part 2b - Messaging patterns</li>
+                <li>Part 3 - Akka HTTP</li>
             </ul>
         </article>
     </slide>
 
     <slide>
-        <aside class="note">
-            <section>
-                <ul>
-                    <li>Scale up (Concurrency)</li>
-                    <li>Scale out (Remoting)</li>
-                </ul>
-            </section>
-        </aside>
         <hgroup><h2>Routers</h2></hgroup>
         <article>
             <ul>
@@ -582,9 +563,49 @@ object ComputeRouterExample extends App {
     router ! "how long is this string?"
 }</pre>
         </article>
-        <span class="example">ComputeRouter_1.java|scala</span>
+        <span class="example">ComputeRouter_1.java|kt</span>
 
 
+    </slide>
+
+
+    <slide>
+        <hgroup>
+            <h2>Part 2b - Exercises</h2>
+        </hgroup>
+        <article class="large">
+            <ul>
+                <li>VettingSubActor.java|kt and VettingSubActorTest.java|kt</li>
+                <li>VettingFutureActor.java|kt and VettingFutureActorTest.java|kt</li>
+                <li>VettingRouterActor.java|kt and VettingRouterActorTest.java|kt</li>
+            </ul>
+
+            <br>
+            <ul>
+                <li>Docs:
+                    <ul>
+                        <li><a style="margin-left: 1em" href="http://doc.akka.io/docs/akka/2.3.9/java/untyped-actors.html#Lifecycle_Monitoring_aka_DeathWatch">Lifecycle Monitoring aka DeathWatch</a></li>
+                        <li><a style="margin-left: 1em" href="http://doc.akka.io/docs/akka/2.4.19/java/routing.html">Routers</a></li>
+                        <li><a style="margin-left: 1em" href="http://doc.akka.io/docs/akka/2.4.19/java/futures.html">Futures</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </article>
+    </slide>
+
+
+    <slide>
+        <hgroup>
+            <h2>Outline</h2>
+        </hgroup>
+        <article class="large">
+            <ul>
+                <li>Part 1 - Creating actors and sending messages</li>
+                <li>Part 2a - Actor supervision and death watch</li>
+                <li>Part 2b - Messaging patterns</li>
+                <li class="outlineHighlight">Part 3 - Akka HTTP</li>
+            </ul>
+        </article>
     </slide>
 
     <slide>
@@ -593,8 +614,8 @@ object ComputeRouterExample extends App {
         </hgroup>
         <article class="large">
             <ul>
-                <li>Implement SuperComputeActor.java|scala</li>
-                <li>Make tests in SuperComputerActorTest.java|scala green</li>
+                <li>Implement SuperComputeActor.java|kt</li>
+                <li>Make tests in SuperComputerActorTest.java|kt green</li>
             </ul>
 
             <br>
