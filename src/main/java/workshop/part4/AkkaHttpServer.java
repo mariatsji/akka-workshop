@@ -25,22 +25,17 @@ public class AkkaHttpServer {
     public static final String HOST_BINDING = "localhost";
     public static final int PORT = 8080;
 
-    private ActorRef vettingSupervisor;
-
     public static void main(String[] args) {
         AkkaHttpServer app = new AkkaHttpServer();
 
-        app.start();
+        app.start(ActorSystem.create("routes"));
     }
 
-    private void start() {
-        // boot up server using the route as defined below
-        ActorSystem system = ActorSystem.create("routes");
-
+    private void start(ActorSystem system) {
         ActorRef userActor = system.actorOf(Props.create(UserActor.class, () -> new UserActor(new UserService())));
         ActorRef fraudWordActor = system.actorOf(Props.create(FraudWordActor.class, () -> new FraudWordActor(new FraudWordService())));
 
-        vettingSupervisor = system.actorOf(Props.create(VettingSupervisor.class, () -> new VettingSupervisor(new VettingActorFactory(userActor, fraudWordActor))));
+        ActorRef vettingSupervisor = system.actorOf(Props.create(VettingSupervisor.class, () -> new VettingSupervisor(new VettingActorFactory(userActor, fraudWordActor))));
 
         final Http http = Http.get(system);
 

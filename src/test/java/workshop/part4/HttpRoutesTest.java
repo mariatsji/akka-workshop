@@ -17,9 +17,8 @@ import workshop.part1.Verdict;
 public class HttpRoutesTest extends JUnitRouteTest {
 
     private ActorSystem system = ActorSystem.create();
-    private TestProbe sender = TestProbe.apply(system);
-    private TestRoute appRoute = testRoute(new HttpRoutes(sender.ref(), new TestVerdictCache()).registerRoutes());
-
+    private TestProbe dummyActor = TestProbe.apply(system);
+    private TestRoute appRoute = testRoute(new HttpRoutes(dummyActor.ref(), new TestVerdictCache()).registerRoutes());
 
     @Test
     public void rootGives404() {
