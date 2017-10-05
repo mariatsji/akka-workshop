@@ -43,4 +43,26 @@ public class Ad {
     public String getDescription() {
         return description;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Ad ad = (Ad) o;
+
+        if (!adId.equals(ad.adId)) return false;
+        if (!userId.equals(ad.userId)) return false;
+        if (!title.equals(ad.title)) return false;
+        return description.equals(ad.description);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = adId.hashCode();
+        result = 31 * result + userId.hashCode();
+        result = 31 * result + title.hashCode();
+        result = 31 * result + description.hashCode();
+        return result;
+    }
 }

@@ -46,7 +46,7 @@ public class AkkaHttpServer {
 
         final ActorMaterializer materializer = ActorMaterializer.create(system);
 
-        Flow<HttpRequest, HttpResponse, NotUsed> flow = new HttpRoutes(vettingSupervisor).registerRoutes().flow(system, materializer);
+        Flow<HttpRequest, HttpResponse, NotUsed> flow = new HttpRoutes(vettingSupervisor, new VerdictCache()).registerRoutes().flow(system, materializer);
 
         CompletionStage<ServerBinding> binding = http.bindAndHandle(flow, ConnectHttp.toHost(
                 HOST_BINDING, PORT), materializer);

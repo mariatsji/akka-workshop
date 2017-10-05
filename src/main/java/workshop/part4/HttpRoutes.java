@@ -19,9 +19,11 @@ import static akka.http.javadsl.server.PathMatchers.integerSegment;
 class HttpRoutes extends AllDirectives {
 
     private final ActorRef vettingActor;
+    private final VerdictCache cache;
 
-    public HttpRoutes(ActorRef vettingActor) {
+    public HttpRoutes(ActorRef vettingActor, VerdictCache cache) {
         this.vettingActor = vettingActor;
+        this.cache = cache;
     }
 
     /**
@@ -51,10 +53,11 @@ class HttpRoutes extends AllDirectives {
     private Route evaluate() {
         return post(() ->
                 path("evaluate", () ->
-                        entity(Jackson.unmarshaller(Ad.class), ad -> VerdictCache.get(ad)
+                        entity(Jackson.unmarshaller(Ad.class), ad ->
+                                cache.get(ad)
                                 .map(a -> verdict())
                                 .getOrElse(() -> completeOrRecoverWith(
-                                        () -> pendingVetting(ad),
+                                        () -> doVetting(ad),
                                         Jackson.marshaller(),
                                         t -> error()))
                         ))
@@ -65,14 +68,14 @@ class HttpRoutes extends AllDirectives {
         return get(() ->
                 pathPrefix("evaluate", () ->
                         path(integerSegment(), adId -> {
-                            return VerdictCache.get(adId)
+                            return cache.get(adId)
                                     .map(verdict -> complete(StatusCodes.OK, verdict, Jackson.marshaller()))
                                     .getOrElse(() -> complete(StatusCodes.NOT_FOUND, String.format("No such vetting: %d", adId)));
                                 }
                         )));
     }
 
-    private CompletionStage<Verdict> pendingVetting(final Ad ad) {
+    private CompletionStage<Verdict> doVetting(final Ad ad) {
 
         String verdictId = String.valueOf(ad.getAdId());
 
@@ -87,7 +90,7 @@ class HttpRoutes extends AllDirectives {
             } else {
                 vettingVerdict.thenRunAsync(() -> {
                     Verdict verdict = new Verdict(verdictId, vt);
-                    VerdictCache.put(ad, verdict);
+                    cache.put(ad, verdict);
                 });
             }
         }).thenApply(vt -> new Verdict(verdictId, vt));
