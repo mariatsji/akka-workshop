@@ -3,7 +3,6 @@ package workshop.part1
 import akka.actor.*
 import akka.actor.SupervisorStrategy.resume
 import akka.japi.pf.DeciderBuilder
-import akka.japi.pf.ReceiveBuilder
 import akka.testkit.TestActorRef
 import akka.testkit.TestProbe
 import com.natpryce.hamkrest.assertion.assertThat
@@ -16,10 +15,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
-import scala.PartialFunction
 import scala.concurrent.duration.Duration
 import scala.concurrent.duration.FiniteDuration
-import scala.runtime.BoxedUnit
 import workshop.common.ad.Ad
 import workshop.common.fraudwordsservice.FraudWord
 import workshop.common.fraudwordsservice.FraudWordService
@@ -172,8 +169,8 @@ class VettingActorTest : AkkaTest() {
             return OneForOneStrategy(DeciderBuilder.matchAny { resume() }.build())
         }
 
-        override fun receive(): PartialFunction<Any, BoxedUnit> {
-            return ReceiveBuilder.create().build()
+        override fun createReceive(): Receive {
+            return receiveBuilder().build()
         }
     }
 }

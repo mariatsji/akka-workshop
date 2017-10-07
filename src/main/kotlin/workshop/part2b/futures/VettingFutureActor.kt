@@ -4,14 +4,11 @@ import akka.actor.AbstractActor
 import akka.actor.ActorRef
 import akka.dispatch.Futures
 import akka.dispatch.Recover
-import akka.japi.pf.ReceiveBuilder
 import akka.pattern.Patterns
 import akka.util.Timeout
-import scala.PartialFunction
 import scala.concurrent.Future
 import scala.concurrent.duration.FiniteDuration
 import scala.reflect.ClassTag
-import scala.runtime.BoxedUnit
 import workshop.common.ad.Ad
 import workshop.common.userservice.UserCriminalRecord
 import workshop.part1.Verdict
@@ -22,8 +19,8 @@ import workshop.part2b.UserActor.CheckUserResult
 
 class VettingFutureActor internal constructor(private val userActor: ActorRef, private val fraudWordActor: ActorRef, private val timeoutVetting: FiniteDuration) : AbstractActor() {
 
-    override fun receive(): PartialFunction<Any, BoxedUnit> {
-        return ReceiveBuilder.create()
+    override fun createReceive(): Receive {
+        return receiveBuilder()
                 .match(Ad::class.java) { ad ->
                     val userFuture: Future<CheckUserResult> = Patterns.ask(userActor, CheckUser(ad.userId), Timeout(timeoutVetting))
                             .mapTo(ClassTag.apply(CheckUserResult::class.java))

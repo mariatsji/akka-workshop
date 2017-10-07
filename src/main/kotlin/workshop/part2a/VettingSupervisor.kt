@@ -5,10 +5,7 @@ import akka.actor.OneForOneStrategy
 import akka.actor.SupervisorStrategy
 import akka.actor.SupervisorStrategy.*
 import akka.japi.pf.DeciderBuilder
-import akka.japi.pf.ReceiveBuilder
-import scala.PartialFunction
 import scala.concurrent.duration.Duration
-import scala.runtime.BoxedUnit
 import workshop.common.ad.Ad
 import java.util.concurrent.TimeUnit.MINUTES
 
@@ -22,8 +19,8 @@ class VettingSupervisor internal constructor(private val vettingActorFactory: Ve
                 .build())
     }
 
-    override fun receive(): PartialFunction<Any, BoxedUnit> {
-        return ReceiveBuilder.create()
+    override fun createReceive(): Receive {
+        return receiveBuilder()
                 .match(Ad::class.java) { ad -> vettingActorFactory.create(context()).tell(ad, sender()) }
                 .build()
     }

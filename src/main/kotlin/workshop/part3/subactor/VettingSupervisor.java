@@ -6,10 +6,7 @@ import akka.actor.OneForOneStrategy;
 import akka.actor.SupervisorStrategy;
 import akka.actor.Terminated;
 import akka.japi.pf.DeciderBuilder;
-import akka.japi.pf.ReceiveBuilder;
-import scala.PartialFunction;
 import scala.concurrent.duration.Duration;
-import scala.runtime.BoxedUnit;
 import workshop.common.ad.Ad;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
@@ -43,8 +40,8 @@ public class VettingSupervisor extends AbstractActor {
     }
 
     @Override
-    public PartialFunction<Object, BoxedUnit> receive() {
-        return ReceiveBuilder.create()
+    public Receive createReceive() {
+        return receiveBuilder()
                 .match(Terminated.class, t -> System.out.println("VettingActor was terminated!"))
                 .match(Ad.class, ad -> vettingActor.tell(ad, sender()))
                 .build();
