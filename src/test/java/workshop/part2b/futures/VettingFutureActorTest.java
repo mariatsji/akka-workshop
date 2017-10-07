@@ -7,8 +7,6 @@ import akka.testkit.TestActorRef;
 import akka.testkit.TestProbe;
 import javaslang.collection.List;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
 import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.FiniteDuration;
 import workshop.common.ad.Ad;
@@ -25,7 +23,6 @@ import workshop.part2b.subactor.VettingActor;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-@RunWith(MockitoJUnitRunner.class)
 public class VettingFutureActorTest extends AkkaTest {
 
     TestProbe userActor = TestProbe.apply(system);
