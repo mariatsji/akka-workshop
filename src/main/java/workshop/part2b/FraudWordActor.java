@@ -1,10 +1,7 @@
 package workshop.part2b;
 
 import akka.actor.AbstractActor;
-import akka.japi.pf.ReceiveBuilder;
 import javaslang.collection.List;
-import scala.PartialFunction;
-import scala.runtime.BoxedUnit;
 import workshop.common.fraudwordsservice.FraudWord;
 import workshop.common.fraudwordsservice.FraudWordService;
 
@@ -17,8 +14,8 @@ public class FraudWordActor extends AbstractActor {
     }
 
     @Override
-    public PartialFunction<Object, BoxedUnit> receive() {
-        return ReceiveBuilder.create()
+    public Receive createReceive() {
+        return receiveBuilder()
             .match(ExamineWords.class, m -> {
                 sender().tell(new ExamineWordsResult(fraudWordService.examineWords(m.words)), sender());
             })

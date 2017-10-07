@@ -5,17 +5,13 @@ import akka.actor.ActorRef;
 import akka.dispatch.Futures;
 import akka.dispatch.Recover;
 import akka.japi.Function2;
-import akka.japi.pf.ReceiveBuilder;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
 import javaslang.collection.List;
-import scala.PartialFunction;
 import scala.concurrent.ExecutionContextExecutor;
 import scala.concurrent.Future;
 import scala.concurrent.duration.FiniteDuration;
-import scala.reflect.ClassTag;
 import scala.reflect.ClassTag$;
-import scala.runtime.BoxedUnit;
 import workshop.common.ad.Ad;
 import workshop.common.userservice.UserCriminalRecord;
 import workshop.part1.Verdict;
@@ -36,8 +32,8 @@ public class VettingFutureActor extends AbstractActor {
     }
 
     @Override
-    public PartialFunction<Object, BoxedUnit> receive() {
-        return ReceiveBuilder.create()
+    public Receive createReceive() {
+        return receiveBuilder()
             .match(Ad.class, ad -> {
                 Future<CheckUserResult> userFuture = Patterns.ask(userActor, new CheckUser(ad.userId), new Timeout(timeoutVetting))
                     .mapTo(ClassTag$.MODULE$.apply(CheckUserResult.class));

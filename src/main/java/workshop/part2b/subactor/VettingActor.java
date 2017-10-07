@@ -3,11 +3,8 @@ package workshop.part2b.subactor;
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import akka.actor.Terminated;
-import akka.japi.pf.ReceiveBuilder;
 import javaslang.collection.List;
-import scala.PartialFunction;
 import scala.concurrent.duration.FiniteDuration;
-import scala.runtime.BoxedUnit;
 import workshop.common.ad.Ad;
 import workshop.common.fraudwordsservice.FraudWord;
 import workshop.common.userservice.UserCriminalRecord;
@@ -38,8 +35,8 @@ public class VettingActor extends AbstractActor {
     }
 
     @Override
-    public PartialFunction<Object, BoxedUnit> receive() {
-        return ReceiveBuilder.create()
+    public Receive createReceive() {
+        return receiveBuilder()
             .match(Ad.class, ad -> {
                 userActor.tell(new CheckUser(ad.userId), self());
                 fraudWordActor.tell(new ExamineWords(ad.toAdWords()), self());
