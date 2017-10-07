@@ -8,7 +8,7 @@ import akka.pattern.Patterns
 import akka.util.Timeout
 import scala.concurrent.Future
 import scala.concurrent.duration.FiniteDuration
-import scala.reflect.ClassTag
+import scala.reflect.`ClassTag$`
 import workshop.common.ad.Ad
 import workshop.common.userservice.UserCriminalRecord
 import workshop.part1.Verdict
@@ -23,10 +23,10 @@ class VettingFutureActor internal constructor(private val userActor: ActorRef, p
         return receiveBuilder()
                 .match(Ad::class.java) { ad ->
                     val userFuture: Future<CheckUserResult> = Patterns.ask(userActor, CheckUser(ad.userId), Timeout(timeoutVetting))
-                            .mapTo(ClassTag.apply(CheckUserResult::class.java))
+                            .mapTo(`ClassTag$`.`MODULE$`.apply(CheckUserResult::class.java))
 
                     val fraudWordFuture: Future<ExamineWordsResult> = Patterns.ask(fraudWordActor, ExamineWords(ad.toAdWords()), Timeout(timeoutVetting))
-                            .mapTo(ClassTag.apply(ExamineWordsResult::class.java))
+                            .mapTo(`ClassTag$`.`MODULE$`.apply(ExamineWordsResult::class.java))
 
                     val ec = context().system().dispatcher()
 
