@@ -8,8 +8,6 @@ import akka.testkit.TestProbe
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.runners.MockitoJUnitRunner
 import scala.concurrent.duration.Duration
 import scala.concurrent.duration.FiniteDuration
 import workshop.common.ad.Ad
@@ -23,7 +21,6 @@ import workshop.part2b.UserActor.CheckUser
 import workshop.part2b.UserActor.CheckUserResult
 import java.util.concurrent.TimeUnit
 
-@RunWith(MockitoJUnitRunner::class)
 class VettingActorTest : AkkaTest() {
 
     var userActor = TestProbe.apply(system)
