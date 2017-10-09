@@ -466,16 +466,16 @@ class DeathWatchActor extends Actor {
     case e: Exception => throw e
   }
   override def preStart() {
-    println("preStart() - called by FIRST actor-instance during startup")
+    println("preStart() - called on instance creation, but not on restart")
   }
   override def postStop() {
-    println("postStop() - called by ANY actor-instance during shutdown")
+    println("postStop() - called on ANY actor-instance during shutdown")
   }
   override def preRestart(reason: Throwable, message: Option[Any]) {
-    println("preRestart() - called on ANY running actor about to be restarted")
+    println("preRestart() - called on old instance")
   }
   override def postRestart(reason: Throwable) {
-    println("postRestart() - called on a NEW INSTANCE of this actor after restart")
+    println("postRestart() - called on new instance")
   }
 }</pre>
         </article>
