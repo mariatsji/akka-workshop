@@ -41,10 +41,10 @@ public class VettingSupervisorIntegrationTest extends AkkaTest {
             });
 
             VettingActorFactory vettingActorFactory = new VettingActorFactory(userActor.testActor(), fraudWordActor.testActor());
-            ActorRef vettingActor = system.actorOf(Props.create(VettingSupervisor.class, () -> new VettingSupervisor(vettingActorFactory)));
+            ActorRef vettingSupervisor = system.actorOf(Props.create(VettingSupervisor.class, () -> new VettingSupervisor(vettingActorFactory)));
 
-            vettingActor.tell(createAd(1), testActor());
-            vettingActor.tell(createAd(2), testActor());
+            vettingSupervisor.tell(createAd(1), testActor());
+            vettingSupervisor.tell(createAd(2), testActor());
 
             within(duration("3 seconds"), () -> {
                 assertThat(expectMsgClass(Verdict.VerdictType.class), is(Verdict.VerdictType.GOOD));
