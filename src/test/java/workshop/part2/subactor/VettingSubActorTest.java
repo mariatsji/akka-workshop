@@ -18,16 +18,16 @@ import workshop.common.fraudwordsservice.FraudWord;
 import workshop.common.userservice.UserCriminalRecord;
 import workshop.part1.AkkaTest;
 import workshop.part1.Verdict;
-import workshop.part3.FraudWordActor;
-import workshop.part3.FraudWordActor.ExamineWordsResult;
-import workshop.part3.UserActor.CheckUser;
-import workshop.part3.UserActor.CheckUserResult;
+import workshop.part2.FraudWordActor;
+import workshop.part2.FraudWordActor.ExamineWordsResult;
+import workshop.part2.UserActor.CheckUser;
+import workshop.part2.UserActor.CheckUserResult;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
-public class VettingActorTest extends AkkaTest {
+public class VettingSubActorTest extends AkkaTest {
 
     TestProbe userActor = TestProbe.apply(system);
     TestProbe fraudWordActor = TestProbe.apply(system);
@@ -79,7 +79,7 @@ public class VettingActorTest extends AkkaTest {
 
     @Test
     public void repliesWithPendingVerdictWhenVettingTimeoutReached() {
-        TestActorRef<VettingActor> vettingActor = createVettingActor(Duration.create(0, TimeUnit.MILLISECONDS));
+        TestActorRef<VettingSubActor> vettingActor = createVettingActor(Duration.create(0, TimeUnit.MILLISECONDS));
 
         sender.send(vettingActor, createAd());
 
@@ -93,7 +93,7 @@ public class VettingActorTest extends AkkaTest {
     public void repliesWithPendingVerdictWhenUserActorTerminates() {
         FiniteDuration avoidTriggerTimeout = Duration.create(1, TimeUnit.DAYS);
 
-        TestActorRef<VettingActor> vettingActor = createVettingActor(avoidTriggerTimeout);
+        TestActorRef<VettingSubActor> vettingActor = createVettingActor(avoidTriggerTimeout);
 
         sender.watch(vettingActor);
         sender.send(vettingActor, createAd());
@@ -104,7 +104,7 @@ public class VettingActorTest extends AkkaTest {
 
     @Test
     public void terminatesAfterAdWithNoFraudWordsAndUserWithoutCriminalRecord() {
-        TestActorRef<VettingActor> vettingActor = createVettingActor();
+        TestActorRef<VettingSubActor> vettingActor = createVettingActor();
         sender.watch(vettingActor);
         sender.send(vettingActor, createAd());
 
@@ -120,7 +120,7 @@ public class VettingActorTest extends AkkaTest {
 
     @Test
     public void terminatesAfterNotAcceptAdWithFraudWords() {
-        TestActorRef<VettingActor> vettingActor = createVettingActor();
+        TestActorRef<VettingSubActor> vettingActor = createVettingActor();
         sender.watch(vettingActor);
         sender.send(vettingActor, createAd());
 
@@ -136,7 +136,7 @@ public class VettingActorTest extends AkkaTest {
 
     @Test
     public void terminatesAfterVettingTimeoutReached() {
-        TestActorRef<VettingActor> vettingActor = createVettingActor(Duration.create(0, TimeUnit.MILLISECONDS));
+        TestActorRef<VettingSubActor> vettingActor = createVettingActor(Duration.create(0, TimeUnit.MILLISECONDS));
         sender.watch(vettingActor);
         sender.send(vettingActor, createAd());
 
@@ -150,7 +150,7 @@ public class VettingActorTest extends AkkaTest {
     @Test
     public void terminatesAfterUserActorTerminates() {
         FiniteDuration avoidTriggerTimeout = Duration.create(1, TimeUnit.DAYS);
-        TestActorRef<VettingActor> vettingActor = createVettingActor(avoidTriggerTimeout);
+        TestActorRef<VettingSubActor> vettingActor = createVettingActor(avoidTriggerTimeout);
 
         sender.watch(vettingActor);
         sender.send(vettingActor, createAd());
@@ -165,11 +165,11 @@ public class VettingActorTest extends AkkaTest {
         return new Ad(1, "Sofa", "Selling sofa");
     }
 
-    private TestActorRef<VettingActor> createVettingActor() {
+    private TestActorRef<VettingSubActor> createVettingActor() {
         return createVettingActor(Duration.create(10, TimeUnit.SECONDS));
     }
 
-    private TestActorRef<VettingActor> createVettingActor(FiniteDuration timeoutVetting) {
-        return TestActorRef.create(system, Props.create(VettingActor.class, () -> new VettingActor(userActor.ref(), fraudWordActor.ref(), timeoutVetting)));
+    private TestActorRef<VettingSubActor> createVettingActor(FiniteDuration timeoutVetting) {
+        return TestActorRef.create(system, Props.create(VettingSubActor.class, () -> new VettingSubActor(userActor.ref(), fraudWordActor.ref(), timeoutVetting)));
     }
 }

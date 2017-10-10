@@ -1,4 +1,4 @@
-package workshop.part3;
+package workshop.part2;
 
 import akka.actor.AbstractActor;
 import javaslang.collection.List;

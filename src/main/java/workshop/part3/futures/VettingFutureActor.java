@@ -12,9 +12,9 @@ import scala.concurrent.duration.FiniteDuration;
 import workshop.common.ad.Ad;
 import workshop.common.userservice.UserCriminalRecord;
 import workshop.part1.Verdict;
-import workshop.part3.FraudWordActor;
-import workshop.part3.UserActor.CheckUser;
-import workshop.part3.UserActor.CheckUserResult;
+import workshop.part2.FraudWordActor;
+import workshop.part2.UserActor.CheckUser;
+import workshop.part2.UserActor.CheckUserResult;
 
 import static workshop.part1.Verdict.VerdictType;
 

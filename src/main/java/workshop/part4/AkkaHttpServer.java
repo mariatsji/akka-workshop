@@ -15,10 +15,10 @@ import akka.stream.ActorMaterializer;
 import akka.stream.javadsl.Flow;
 import workshop.common.fraudwordsservice.FraudWordService;
 import workshop.common.userservice.UserService;
-import workshop.part2.VettingActorFactory;
-import workshop.part2.VettingSupervisor;
-import workshop.part3.FraudWordActor;
-import workshop.part3.UserActor;
+import workshop.part2.FraudWordActor;
+import workshop.part2.UserActor;
+import workshop.part2.supervisor.VettingActorFactory;
+import workshop.part2.supervisor.VettingSupervisor;
 
 public class AkkaHttpServer {
 

@@ -16,11 +16,11 @@ import workshop.common.fraudwordsservice.FraudWord;
 import workshop.common.userservice.UserCriminalRecord;
 import workshop.part1.AkkaTest;
 import workshop.part1.Verdict;
-import workshop.part3.FraudWordActor;
-import workshop.part3.FraudWordActor.ExamineWordsResult;
-import workshop.part3.UserActor.CheckUser;
-import workshop.part3.UserActor.CheckUserResult;
-import workshop.part2.subactor.VettingActor;
+import workshop.part2.FraudWordActor;
+import workshop.part2.FraudWordActor.ExamineWordsResult;
+import workshop.part2.UserActor.CheckUser;
+import workshop.part2.UserActor.CheckUserResult;
+import workshop.part2.subactor.VettingSubActor;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -77,8 +77,8 @@ public class VettingFutureActorTest extends AkkaTest {
     }
 
     @Test
-    public void repliesWithUnknownVerdictWhenVettingTimeoutReached() {
-        TestActorRef<VettingActor> vettingActor = createVettingActor(Duration.create(0, TimeUnit.MILLISECONDS));
+    public void repliesWithPendingVerdictWhenVettingTimeoutReached() {
+        TestActorRef<VettingSubActor> vettingActor = createVettingActor(Duration.create(0, TimeUnit.MILLISECONDS));
 
         sender.watch(vettingActor);
         sender.send(vettingActor, createAd());
@@ -93,11 +93,11 @@ public class VettingFutureActorTest extends AkkaTest {
         return new Ad(1, "Sofa", "Selling sofa");
     }
 
-    private TestActorRef<VettingActor> createVettingActor() {
+    private TestActorRef<VettingSubActor> createVettingActor() {
         return createVettingActor(Duration.create(10, TimeUnit.SECONDS));
     }
 
-    private TestActorRef<VettingActor> createVettingActor(FiniteDuration timeoutVetting) {
+    private TestActorRef<VettingSubActor> createVettingActor(FiniteDuration timeoutVetting) {
         return TestActorRef.create(system, Props.create(VettingFutureActor.class, () -> new VettingFutureActor(userActor.ref(), fraudWordActor.ref(), timeoutVetting)));
     }
 }
