@@ -1,4 +1,4 @@
-package workshop.part2a;
+package workshop.part2;
 
 import akka.actor.ActorRef;
 import akka.actor.Props;
@@ -10,8 +10,8 @@ import workshop.common.ad.Ad;
 import workshop.common.userservice.UserCriminalRecord;
 import workshop.part1.AkkaTest;
 import workshop.part1.Verdict;
-import workshop.part2b.FraudWordActor;
-import workshop.part2b.UserActor;
+import workshop.part3.FraudWordActor;
+import workshop.part3.UserActor;
 
 import static akka.actor.ActorRef.noSender;
 import static akka.testkit.JavaTestKit.duration;

@@ -1,4 +1,4 @@
-package workshop.part2b.futures;
+package workshop.part3.futures;
 
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
@@ -15,9 +15,9 @@ import scala.reflect.ClassTag$;
 import workshop.common.ad.Ad;
 import workshop.common.userservice.UserCriminalRecord;
 import workshop.part1.Verdict;
-import workshop.part2b.FraudWordActor;
-import workshop.part2b.UserActor.CheckUser;
-import workshop.part2b.UserActor.CheckUserResult;
+import workshop.part3.FraudWordActor;
+import workshop.part3.UserActor.CheckUser;
+import workshop.part3.UserActor.CheckUserResult;
 
 public class VettingFutureActor extends AbstractActor {
 

@@ -1,4 +1,4 @@
-package workshop.part2a;
+package workshop.part2;
 
 import akka.actor.ActorContext;
 import akka.actor.Props;

@@ -1,4 +1,4 @@
-package workshop.part2a;
+package workshop.part2;
 
 public class UserNotFoundException extends Exception {
     public UserNotFoundException(String message) {

@@ -1,4 +1,4 @@
-package workshop.part2a;
+package workshop.part2;
 
 import java.util.concurrent.TimeUnit;
 
@@ -6,7 +6,7 @@ import akka.actor.ActorContext;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import scala.concurrent.duration.Duration;
-import workshop.part2b.subactor.VettingActor;
+import workshop.part2.subactor.VettingActor;
 
 public class VettingActorFactory {
 

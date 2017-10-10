@@ -1,4 +1,4 @@
-package workshop.part2b.subactor;
+package workshop.part2.subactor;
 
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
@@ -9,10 +9,10 @@ import workshop.common.ad.Ad;
 import workshop.common.fraudwordsservice.FraudWord;
 import workshop.common.userservice.UserCriminalRecord;
 import workshop.part1.Verdict;
-import workshop.part2b.FraudWordActor.ExamineWords;
-import workshop.part2b.FraudWordActor.ExamineWordsResult;
-import workshop.part2b.UserActor.CheckUser;
-import workshop.part2b.UserActor.CheckUserResult;
+import workshop.part3.FraudWordActor.ExamineWords;
+import workshop.part3.FraudWordActor.ExamineWordsResult;
+import workshop.part3.UserActor.CheckUser;
+import workshop.part3.UserActor.CheckUserResult;
 
 public class VettingActor extends AbstractActor {
 

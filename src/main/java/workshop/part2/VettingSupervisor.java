@@ -1,4 +1,4 @@
-package workshop.part2a;
+package workshop.part2;
 
 import akka.actor.AbstractActor;
 import akka.actor.OneForOneStrategy;
