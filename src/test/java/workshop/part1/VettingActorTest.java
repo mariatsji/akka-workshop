@@ -9,6 +9,7 @@ import akka.actor.OneForOneStrategy;
 import akka.actor.Props;
 import akka.actor.SupervisorStrategy;
 import akka.japi.pf.DeciderBuilder;
+import akka.japi.pf.ReceiveBuilder;
 import akka.testkit.TestActorRef;
 import akka.testkit.TestProbe;
 import javaslang.collection.List;
@@ -16,8 +17,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import scala.PartialFunction;
 import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.FiniteDuration;
+import scala.runtime.BoxedUnit;
 import workshop.common.ad.Ad;
 import workshop.common.fraudwordsservice.FraudWord;
 import workshop.common.fraudwordsservice.FraudWordService;
@@ -189,8 +192,8 @@ public class VettingActorTest extends AkkaTest {
         }
 
         @Override
-        public Receive createReceive() {
-            return receiveBuilder().build();
+        public PartialFunction<Object, BoxedUnit> receive() {
+            return ReceiveBuilder.create().build();
         }
     }
 

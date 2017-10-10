@@ -1,6 +1,9 @@
 package workshop.part2b;
 
 import akka.actor.AbstractActor;
+import akka.japi.pf.ReceiveBuilder;
+import scala.PartialFunction;
+import scala.runtime.BoxedUnit;
 import workshop.common.userservice.UserCriminalRecord;
 import workshop.common.userservice.UserService;
 
@@ -13,8 +16,8 @@ public class UserActor extends AbstractActor {
     }
 
     @Override
-    public Receive createReceive() {
-        return receiveBuilder()
+    public PartialFunction<Object, BoxedUnit> receive() {
+        return ReceiveBuilder.create()
             .match(CheckUser.class, m -> {
                 UserCriminalRecord result = userService.vettUser(m.userId);
                 sender().tell(new CheckUserResult(result), sender());

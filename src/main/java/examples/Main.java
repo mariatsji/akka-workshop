@@ -6,7 +6,10 @@ import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
+import akka.japi.pf.ReceiveBuilder;
+import scala.PartialFunction;
 import scala.concurrent.duration.Duration;
+import scala.runtime.BoxedUnit;
 import workshop.common.ad.Ad;
 import workshop.common.fraudwordsservice.FraudWordService;
 import workshop.common.userservice.UserService;
@@ -41,8 +44,8 @@ public class Main {
 
     static class NumVettedAdsActor extends AbstractActor {
         @Override
-        public Receive createReceive() {
-            return receiveBuilder()
+        public PartialFunction<Object, BoxedUnit> receive() {
+            return ReceiveBuilder.create()
                 .match(VettingActor.NumVettedAds.class, m -> {
                     System.out.println("Num vetted ads: " + m.numVettedAds);
                 })
