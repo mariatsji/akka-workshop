@@ -1,23 +1,22 @@
 package workshop.part3.futures;
 
+import java.util.concurrent.CompletionStage;
+
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
-import akka.dispatch.Futures;
-import akka.dispatch.Recover;
-import akka.japi.Function2;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
 import javaslang.collection.List;
-import scala.concurrent.ExecutionContextExecutor;
-import scala.concurrent.Future;
+import scala.compat.java8.FutureConverters;
 import scala.concurrent.duration.FiniteDuration;
-import scala.reflect.ClassTag$;
 import workshop.common.ad.Ad;
 import workshop.common.userservice.UserCriminalRecord;
 import workshop.part1.Verdict;
 import workshop.part3.FraudWordActor;
 import workshop.part3.UserActor.CheckUser;
 import workshop.part3.UserActor.CheckUserResult;
+
+import static workshop.part1.Verdict.VerdictType;
 
 public class VettingFutureActor extends AbstractActor {
 
@@ -35,28 +34,34 @@ public class VettingFutureActor extends AbstractActor {
     public Receive createReceive() {
         return receiveBuilder()
             .match(Ad.class, ad -> {
-                Future<CheckUserResult> userFuture = Patterns.ask(userActor, new CheckUser(ad.userId), new Timeout(timeoutVetting))
-                    .mapTo(ClassTag$.MODULE$.apply(CheckUserResult.class));
+                CompletionStage<CheckUserResult> userFuture = ask(userActor, new CheckUser(ad.userId));
+                CompletionStage<FraudWordActor.ExamineWordsResult> fraudWordFuture = ask(fraudWordActor, new FraudWordActor.ExamineWords(ad.toAdWords()));
 
-                Future<FraudWordActor.ExamineWordsResult> fraudWordFuture = Patterns.ask(fraudWordActor, new FraudWordActor.ExamineWords(ad.toAdWords()), new Timeout(timeoutVetting))
-                    .mapTo(ClassTag$.MODULE$.apply(FraudWordActor.ExamineWordsResult.class));
+                CompletionStage<Boolean> userOk = userFuture.thenApply(result -> result.record == UserCriminalRecord.GOOD);
+                CompletionStage<Boolean> fraudWordOk = fraudWordFuture.thenApply(result -> result.fraudWords.isEmpty());
 
-                ExecutionContextExecutor ec = context().system().dispatcher();
-
-                Future<Boolean> userOk = userFuture.map(result -> result.record == UserCriminalRecord.GOOD, ec);
-                Future<Boolean> fraudWordsOk = fraudWordFuture.map(result -> result.fraudWords.isEmpty(), ec);
-
-                Future<Verdict.VerdictType> verdict = Futures.reduce(List.of(userOk, fraudWordsOk),
-                    (Function2<Boolean, Boolean, Boolean>) (result, current) -> result && current, ec)
-                    .map(result -> result ? Verdict.VerdictType.GOOD : Verdict.VerdictType.BAD, ec)
-                    .recover(new Recover<Verdict.VerdictType>() {
-                        public Verdict.VerdictType recover(Throwable problem) throws Throwable {
-                            return Verdict.VerdictType.PENDING;
+                CompletionStage<Verdict.VerdictType> verdict = userOk.thenCombine(fraudWordOk, (user, fraudWord) -> List.of(user, fraudWord))
+                    .thenApply(res -> res.forAll(r -> r) ? VerdictType.GOOD : VerdictType.BAD)
+                    .handle((ok, ex) -> {
+                        if (ok != null) {
+                            return ok;
+                        } else {
+                            return VerdictType.PENDING;
                         }
-                    }, ec);
+                    });
 
-                Patterns.pipe(verdict, ec).to(sender());
+                pipeTo(sender(), verdict);
             })
             .build();
+
+
+    }
+
+    private void pipeTo(ActorRef receiver, CompletionStage<VerdictType> verdict) {
+        Patterns.pipe(FutureConverters.toScala(verdict), context().system().dispatcher()).to(receiver);
+    }
+
+    private <T> CompletionStage<T> ask(ActorRef receiver, Object msg) {
+        return (CompletionStage<T>) FutureConverters.toJava(Patterns.ask(receiver, msg, new Timeout(timeoutVetting)));
     }
 }
