@@ -52,22 +52,16 @@ URL: https://code.google.com/p/io-2012-slides
                 <li>Code: <a href="https://github.com/mariatsji/akka-workshop">https://github.com/mariatsji/akka-workshop</a></li>
                 <li>
                     <ul>
-                        <li>'java' and 'kotlin' are starting point for exercises</li>
+                        <li>'master' and 'kotlin' are starting point for exercises</li>
                         <li>'java-solution' and 'kotlin-solution' for solution</li>
-                        <li>E.g. 'git checkout java' for branch with Java exercises</li>
-                        <li>Start downloading dependencies: 'mvn test'  </li>
+                        <li>E.g. 'git checkout master' for branch with Java exercises</li>
+                        <li>Start downloading dependencies: 'mvn test'</li>
                     </ul>
                 </li>
             </ul>
 
             <ul>
-                <li>Slides: <a href="https://mariatsji.github.io/akka-workshop/#1">https://mariatsji.github.io/akka-workshop/#1</a></li>
-                <li>
-                    <ul>
-                        <li>Or `./serve.sh`</li>
-                    </ul>
-                </li>
-
+                <li>Slides: <a href="https://mariatsji.github.io/akka-workshop">https://mariatsji.github.io/akka-workshop</a></li>
             </ul>
         </article>
     </slide>
@@ -79,8 +73,8 @@ URL: https://code.google.com/p/io-2012-slides
         <article class="large">
             <ul>
                 <li>Part 1 - Creating actors and sending messages</li>
-                <li>Part 2a - Actor supervision and death watch</li>
-                <li>Part 2b - Messaging patterns</li>
+                <li>Part 2 - Actor supervision and messaging</li>
+                <li>Part 3 - Futures and Routers</li>
                 <li>Part 3  - Akka HTTP</li>
             </ul>
         </article>
@@ -112,9 +106,9 @@ URL: https://code.google.com/p/io-2012-slides
         <article class="large">
             <ul>
                 <li class="outlineHighlight">Part 1 - Creating actors and sending messages</li>
-                <li>Part 2a - Actor supervision and death watch</li>
-                <li>Part 2b - Messaging patterns</li>
-                <li>Part 3 - Akka HTTP</li>
+                <li>Part 2 - Actor supervision and messaging</li>
+                <li>Part 3 - Futures and Routers</li>
+                <li>Part 4 - Akka HTTP</li>
             </ul>
         </article>
     </slide>
@@ -289,7 +283,7 @@ class GreetingActor(delay: FiniteDuration) extends Actor {
         <article class="large">
             <ul>
                 <li>Running multiple test classes<br /><br />
-                <pre class="prettyprint">$ mvn test -Dtest=workshop.part1.ComputeActorTest,ComputeSupervisorTest</pre>
+                <pre class="prettyprint">$ mvn test -Dtest=workshop.part1.VettingActorTest,VettingSupervisorTest</pre>
                 </li>
                 <li>Using wildcards<br /><br />
                     <pre class="prettyprint">$ mvn test -Dtest="workshop.part2.*"</pre></li>
@@ -305,22 +299,10 @@ class GreetingActor(delay: FiniteDuration) extends Actor {
         <article class="large">
             <ul>
                 <li>Part 1 - Creating actors and sending messages</li>
-                <li class="outlineHighlight">Part 2a - Actor supervision and death watch</li>
-                <li>Part 2b - Messaging patterns</li>
-                <li>Part 3 - Akka HTTP</li>
+                <li class="outlineHighlight">Part 2 - Actor supervision and messaging</li>
+                <li>Part 3 - Futures and Routers</li>
+                <li>Part 4 - Akka HTTP</li>
             </ul>
-        </article>
-    </slide>
-
-    <slide>
-        <hgroup>
-            <h2>Part 2 - Overview</h2>
-        </hgroup>
-        <article>
-            <br>
-            <p class="flexbox vcenter">
-                <img src="figures/workshop-architecture.png" style="max-height: 430px" />
-            </p>
         </article>
     </slide>
 
@@ -493,16 +475,39 @@ class DeathWatchActor extends Actor {
         </article>
     </slide>
 
+    <slide>
+        <hgroup>
+            <h2>Part 2 - Overview</h2>
+        </hgroup>
+        <article>
+            <br>
+            <p class="flexbox vcenter">
+                <img src="figures/workshop-architecture.png" style="max-height: 430px" />
+            </p>
+        </article>
+    </slide>
 
     <slide>
         <hgroup>
-            <h2>Part 2a - Exercises</h2>
+            <h2>Part 2 - Exercises</h2>
         </hgroup>
         <article class="large">
 
             <ul>
-                <li>Implement VettingSupervisor</li>
-                <li>Make tests in VettingSupervisorTest green</li>
+                <li>
+                    <h3>Supervision</h3>
+                    <ul>
+                        <li>Implement VettingSupervisor</li>
+                        <li>Make tests in VettingSupervisorTest green</li>
+                    </ul>
+                </li>
+                <li>
+                    <h3>Messaging and Death Watch</h3>
+                    <ul>
+                        <li>Implement VettingSubActor</li>
+                        <li>Make tests in VettingSubActorTest green</li>
+                    </ul>
+                </li>
             </ul>
 
             <br>
@@ -510,6 +515,7 @@ class DeathWatchActor extends Actor {
                 <li>Docs:
                     <ul>
                         <li><a style="margin-left: 1em" href="https://doc.akka.io/docs/akka/2.5.6/java/fault-tolerance.html">Creating a Supervisor Strategy</a></li>
+                        <li><a style="margin-left: 1em" href="https://doc.akka.io/docs/akka/2.5.6/java/actors.html#lifecycle-monitoring-aka-deathwatch">Lifecycle Monitoring aka DeathWatch</a></li>
                     </ul>
                 </li>
             </ul>
@@ -523,9 +529,9 @@ class DeathWatchActor extends Actor {
         <article class="large">
             <ul>
                 <li>Part 1 - Creating actors and sending messages</li>
-                <li>Part 2a - Actor supervision and death watch</li>
-                <li class="outlineHighlight">Part 2b - Messaging patterns</li>
-                <li>Part 3 - Akka HTTP</li>
+                <li>Part 2 - Actor supervision and messaging</li>
+                <li class="outlineHighlight">Part 3 - Futures and Routers</li>
+                <li>Part 4 - Akka HTTP</li>
             </ul>
         </article>
     </slide>
@@ -571,11 +577,10 @@ object ComputeRouterExample extends App {
 
     <slide>
         <hgroup>
-            <h2>Part 2b - Exercises</h2>
+            <h2>Part 4 - Exercises</h2>
         </hgroup>
         <article class="large">
             <ul>
-                <li>VettingSubActor.java|kt and VettingSubActorTest.java|kt</li>
                 <li>VettingFutureActor.java|kt and VettingFutureActorTest.java|kt</li>
                 <li>VettingRouterActor.java|kt and VettingRouterActorTest.java|kt</li>
             </ul>
@@ -584,7 +589,6 @@ object ComputeRouterExample extends App {
             <ul>
                 <li>Docs:
                     <ul>
-                        <li><a style="margin-left: 1em" href="https://doc.akka.io/docs/akka/2.5.6/java/actors.html#lifecycle-monitoring-aka-deathwatch">Lifecycle Monitoring aka DeathWatch</a></li>
                         <li><a style="margin-left: 1em" href="http://doc.akka.io/docs/akka/2.5.6/java/routing.html">Routers</a></li>
                         <li><a style="margin-left: 1em" href="https://doc.akka.io/docs/akka/2.5.6/java/futures.html">Futures</a></li>
                     </ul>
@@ -601,9 +605,9 @@ object ComputeRouterExample extends App {
         <article class="large">
             <ul>
                 <li>Part 1 - Creating actors and sending messages</li>
-                <li>Part 2a - Actor supervision and death watch</li>
-                <li>Part 2b - Messaging patterns</li>
-                <li class="outlineHighlight">Part 3 - Akka HTTP</li>
+                <li>Part 2 - Actor supervision and messaging</li>
+                <li>Part 3 - Futures and Routers</li>
+                <li class="outlineHighlight">Part 4 - Akka HTTP</li>
             </ul>
         </article>
     </slide>
