@@ -31,6 +31,12 @@
 
         <dependency>
             <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-stream_2.12</artifactId>
+            <version>${akka-actor_2.12.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-http-jackson_2.12</artifactId>
             <version>${akka-http_2.12.version}</version>
         </dependency>
