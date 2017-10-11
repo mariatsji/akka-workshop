@@ -1,4 +1,4 @@
-package workshop.part3.example;
+package workshop.part4.example;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;

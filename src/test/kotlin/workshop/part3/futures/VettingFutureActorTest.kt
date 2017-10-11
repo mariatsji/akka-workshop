@@ -1,10 +1,10 @@
-package workshop.part2b.futures
+package workshop.part3.futures
 
 import akka.actor.Props
 import akka.testkit.TestActorRef
 import akka.testkit.TestProbe
-import org.hamcrest.core.Is.`is`
-import org.junit.Assert.assertThat
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import org.junit.Test
 import scala.concurrent.duration.Duration
 import scala.concurrent.duration.FiniteDuration
@@ -13,11 +13,11 @@ import workshop.common.fraudwordsservice.FraudWord
 import workshop.common.userservice.UserCriminalRecord
 import workshop.part1.AkkaTest
 import workshop.part1.Verdict
-import workshop.part2b.FraudWordActor
-import workshop.part2b.FraudWordActor.ExamineWordsResult
-import workshop.part2b.UserActor.CheckUser
-import workshop.part2b.UserActor.CheckUserResult
-import workshop.part2b.subactor.VettingActor
+import workshop.part2.FraudWordActor
+import workshop.part2.FraudWordActor.ExamineWordsResult
+import workshop.part2.UserActor.CheckUser
+import workshop.part2.UserActor.CheckUserResult
+import workshop.part2.subactor.VettingActor
 import java.util.concurrent.TimeUnit
 
 class VettingFutureActorTest : AkkaTest() {
@@ -37,7 +37,7 @@ class VettingFutureActorTest : AkkaTest() {
 
         val verdict = sender.expectMsgClass(Verdict::class.java)
 
-        assertThat(verdict, `is`(Verdict.GOOD))
+        assertThat(verdict, equalTo(Verdict.GOOD))
     }
 
     @Test
@@ -52,7 +52,7 @@ class VettingFutureActorTest : AkkaTest() {
 
         val verdict = sender.expectMsgClass(Verdict::class.java)
 
-        assertThat(verdict, `is`(Verdict.BAD))
+        assertThat(verdict, equalTo(Verdict.BAD))
     }
 
     @Test
@@ -67,7 +67,7 @@ class VettingFutureActorTest : AkkaTest() {
 
         val verdict = sender.expectMsgClass(Verdict::class.java)
 
-        assertThat(verdict, `is`(Verdict.BAD))
+        assertThat(verdict, equalTo(Verdict.BAD))
     }
 
     @Test
@@ -80,7 +80,7 @@ class VettingFutureActorTest : AkkaTest() {
         schedule(Duration.create(500, TimeUnit.MILLISECONDS), vettingActor, CheckUserResult(UserCriminalRecord.GOOD))
         schedule(Duration.create(500, TimeUnit.MILLISECONDS), vettingActor, ExamineWordsResult(emptyList()))
 
-        assertThat(sender.expectMsgClass(Verdict::class.java), `is`(Verdict.PENDING))
+        assertThat(sender.expectMsgClass(Verdict::class.java), equalTo(Verdict.PENDING))
     }
 
     private fun createAd(): Ad {

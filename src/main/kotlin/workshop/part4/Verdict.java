@@ -1,4 +1,4 @@
-package workshop.part3;
+package workshop.part4;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

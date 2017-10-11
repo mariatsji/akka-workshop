@@ -1,4 +1,4 @@
-package workshop.part3.subactor;
+package workshop.part4.subactor;
 
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;

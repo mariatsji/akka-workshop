@@ -1,16 +1,17 @@
-package workshop.part3.subactor
+package workshop.part2.subactor
 
 import akka.actor.ActorRef
+import akka.actor.Terminated
 import akka.actor.UntypedActor
 import scala.concurrent.duration.FiniteDuration
 import workshop.common.ad.Ad
 import workshop.common.fraudwordsservice.FraudWord
 import workshop.common.userservice.UserCriminalRecord
 import workshop.part1.Verdict
-import workshop.part2b.FraudWordActor.ExamineWords
-import workshop.part2b.FraudWordActor.ExamineWordsResult
-import workshop.part2b.UserActor.CheckUser
-import workshop.part2b.UserActor.CheckUserResult
+import workshop.part2.FraudWordActor.ExamineWords
+import workshop.part2.FraudWordActor.ExamineWordsResult
+import workshop.part2.UserActor.CheckUser
+import workshop.part2.UserActor.CheckUserResult
 
 class VettingActor(private val userActor: ActorRef,
                    private val fraudWordActor: ActorRef,
@@ -19,6 +20,10 @@ class VettingActor(private val userActor: ActorRef,
     private var checkUserResult: CheckUserResult? = null
     private var examineWordsResult: ExamineWordsResult? = null
     private var senderSaved: ActorRef? = null
+
+    override fun preStart() {
+        context.watch(userActor)
+    }
 
     override fun onReceive(msg: Any?) = when (msg) {
         is Ad -> {
@@ -43,6 +48,7 @@ class VettingActor(private val userActor: ActorRef,
             }
         }
         is TimeoutVetting -> sendVerdictAndTerminateSelf(Verdict.PENDING, senderSaved)
+        is Terminated -> sendVerdictAndTerminateSelf(Verdict.PENDING, senderSaved)
         else -> unhandled(msg)
     }
 

@@ -1,4 +1,4 @@
-package workshop.part2a
+package workshop.part2
 
 import akka.actor.Props
 import akka.actor.SupervisorStrategy
@@ -7,13 +7,15 @@ import akka.testkit.TestProbe
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Test
 import org.mockito.Mockito.mock
 import workshop.common.ad.Ad
 import workshop.part1.AkkaTest
 import workshop.part1.Verdict
+import workshop.part2.supervisor.UserNotFoundException
+import workshop.part2.supervisor.VettingActorFactory
+import workshop.part2.supervisor.VettingSupervisor
 
 
 class VettingSupervisorTest : AkkaTest() {
@@ -28,7 +30,6 @@ class VettingSupervisorTest : AkkaTest() {
         val ad = createAd(123)
         createVettingSupervisor(vettingActorFactory).tell(ad, sender.ref())
 
-        verify(vettingActorFactory).create(any())
         assertThat(sender.expectMsgClass(Ad::class.java), equalTo(ad))
     }
 
@@ -45,6 +46,7 @@ class VettingSupervisorTest : AkkaTest() {
 
         vettingActor.expectMsgClass(Ad::class.java)
         vettingActor.reply(Verdict.GOOD)
+
         assertThat(sender.expectMsgClass(Verdict::class.java), equalTo(Verdict.GOOD))
     }
 

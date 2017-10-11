@@ -1,4 +1,4 @@
-package workshop.part2b
+package workshop.part4
 
 import akka.actor.UntypedActor
 import workshop.common.fraudwordsservice.FraudWord
@@ -11,7 +11,7 @@ class FraudWordActor(private val fraudWordService: FraudWordService) : UntypedAc
         else -> unhandled(msg)
     }
 
-    class ExamineWords(val words: List<String>)
+    data class ExamineWords(val words: List<String>)
 
-    class ExamineWordsResult(val fraudWords: List<FraudWord>)
+    data class ExamineWordsResult(val fraudWords: List<FraudWord>)
 }

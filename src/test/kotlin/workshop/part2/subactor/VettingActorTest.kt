@@ -1,4 +1,4 @@
-package workshop.part2b.subactor
+package workshop.part2.subactor
 
 import akka.actor.PoisonPill
 import akka.actor.Props
@@ -15,10 +15,10 @@ import workshop.common.fraudwordsservice.FraudWord
 import workshop.common.userservice.UserCriminalRecord
 import workshop.part1.AkkaTest
 import workshop.part1.Verdict
-import workshop.part2b.FraudWordActor
-import workshop.part2b.FraudWordActor.ExamineWordsResult
-import workshop.part2b.UserActor.CheckUser
-import workshop.part2b.UserActor.CheckUserResult
+import workshop.part2.FraudWordActor
+import workshop.part2.FraudWordActor.ExamineWordsResult
+import workshop.part2.UserActor.CheckUser
+import workshop.part2.UserActor.CheckUserResult
 import java.util.concurrent.TimeUnit
 
 class VettingActorTest : AkkaTest() {

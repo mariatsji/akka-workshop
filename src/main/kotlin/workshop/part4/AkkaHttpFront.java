@@ -1,4 +1,4 @@
-package workshop.part3;
+package workshop.part4;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -24,8 +24,8 @@ import scala.concurrent.Future;
 import workshop.common.ad.Ad;
 import workshop.common.fraudwordsservice.FraudWordService;
 import workshop.common.userservice.UserService;
-import workshop.part3.subactor.VettingActorFactory;
-import workshop.part3.subactor.VettingSupervisor;
+import workshop.part4.subactor.VettingActorFactory;
+import workshop.part4.subactor.VettingSupervisor;
 
 import static akka.http.javadsl.server.PathMatchers.longSegment;
 
