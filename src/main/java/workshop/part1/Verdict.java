@@ -3,6 +3,7 @@ package workshop.part1;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+// This class is used as http response in the akka-http service in part 4
 public class Verdict {
 
     private final String id;
@@ -23,6 +24,7 @@ public class Verdict {
         return value;
     }
 
+    // This enum is returned from actors as a vetting result
     public enum VerdictType {
         GOOD, BAD, PENDING, FAILURE
     }

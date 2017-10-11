@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javaslang.collection.List;
 
+// This class is sent as an Akka-message, and also has a json-mapping for akka-http in part 4
 public class Ad {
 
     public final Integer adId;

@@ -4,6 +4,7 @@ import javaslang.collection.List;
 
 public class FraudWordService {
 
+    // returns a list of banned words from any list of words
     public List<FraudWord> examineWords(List<String> words) {
         return words
                 .map(String::trim)

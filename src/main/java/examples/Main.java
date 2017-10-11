@@ -2,7 +2,6 @@ package examples;
 
 import java.util.concurrent.TimeUnit;
 
-import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
@@ -10,6 +9,7 @@ import scala.concurrent.duration.Duration;
 import workshop.common.ad.Ad;
 import workshop.common.fraudwordsservice.FraudWordService;
 import workshop.common.userservice.UserService;
+import workshop.part1.NumVettedAdsActor;
 import workshop.part1.VettingActor;
 
 public class Main {
@@ -39,14 +39,5 @@ public class Main {
     }
 
 
-    static class NumVettedAdsActor extends AbstractActor {
-        @Override
-        public Receive createReceive() {
-            return receiveBuilder()
-                .match(VettingActor.NumVettedAds.class, m -> {
-                    System.out.println("Num vetted ads: " + m.numVettedAds);
-                })
-                .build();
-        }
-    }
+
 }

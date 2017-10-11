@@ -2,12 +2,8 @@ package workshop.part1;
 
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
-import javaslang.collection.List;
 import scala.concurrent.duration.FiniteDuration;
-import workshop.common.ad.Ad;
-import workshop.common.fraudwordsservice.FraudWord;
 import workshop.common.fraudwordsservice.FraudWordService;
-import workshop.common.userservice.UserCriminalRecord;
 import workshop.common.userservice.UserService;
 
 public class VettingActor extends AbstractActor {
@@ -26,46 +22,16 @@ public class VettingActor extends AbstractActor {
     }
 
     @Override
-    public void preStart() throws Exception {
-        scheduleReportNumVettedAds();
-    }
-
-    @Override
+    // 1) Act on Ad message (reply with a Verdict.VerdictType) using UserService and FraudWordService
+    // 2) Act on GetNumVettedAds message (reply with a NumVettedAds object)
+    // 3) Act on ReportNumVettedAds - every numVettedAdsInterval schedule a message to NumVettedAdsActor telling it to print number of vetted ads
     public Receive createReceive() {
         return receiveBuilder()
-            .match(Ad.class, ad -> {
-                Verdict.VerdictType verdict = performVetting(ad);
-                numVettedAds += 1;
-                sender().tell(verdict, self());
-            })
-            .match(GetNumVettedAds.class, m -> sender().tell(new NumVettedAds(numVettedAds), self()))
-            .match(ReportNumVettedAds.class, m -> {
-                numVettedAdsActor.tell(new NumVettedAds(numVettedAds), self());
-                scheduleReportNumVettedAds();
-            })
             .build();
     }
 
-    private Verdict.VerdictType performVetting(Ad ad) {
-        UserCriminalRecord record = userService.vettUser(ad.userId);
-        List<FraudWord> fraudWords = fraudWordService.examineWords(ad.toAdWords());
 
-        return toVerdictStatus(record, fraudWords);
-    }
-
-    private Verdict.VerdictType toVerdictStatus(UserCriminalRecord record, List<FraudWord> fraudWords) {
-        if (record == UserCriminalRecord.GOOD && fraudWords.isEmpty()) {
-            return Verdict.VerdictType.GOOD;
-        } else {
-            return Verdict.VerdictType.BAD;
-        }
-    }
-
-    private void scheduleReportNumVettedAds() {
-        context().system().scheduler().scheduleOnce(numVettedAdsInterval, self(),
-            new ReportNumVettedAds(), context().system().dispatcher(), self());
-    }
-
+    // reply with a NumVettedAds-message when receiving a message of this type
     static class GetNumVettedAds {
     }
 
@@ -77,6 +43,7 @@ public class VettingActor extends AbstractActor {
         }
     }
 
+    // schedule a message of this type to myself every numVettedAdsInterval
     static class ReportNumVettedAds {
     }
 }
