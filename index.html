@@ -540,7 +540,8 @@ class DeathWatchActor extends Actor {
         <hgroup><h2>Routers</h2></hgroup>
         <article>
             <ul>
-                <li>Routers are not actors, they are specifically designed for concurrency</li>
+                <li>Routers are actors specifically designed for concurrency</li>
+		<li>Have a group or pool of actors it can route messages to</li>
                 <li>Akka comes with different routers</li>
             </ul>
             <img src="figures/routers.png" style="max-height: 300px;" />
