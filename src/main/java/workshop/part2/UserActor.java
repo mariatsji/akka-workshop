@@ -15,13 +15,10 @@ public class UserActor extends AbstractActor {
     @Override
     public Receive createReceive() {
         return receiveBuilder()
-            .match(CheckUser.class, m -> {
-                UserCriminalRecord result = userService.vettUser(m.userId);
-                sender().tell(new CheckUserResult(result), sender());
-            })
             .build();
     }
 
+    // Reply message type
     public static class CheckUserResult {
         public final UserCriminalRecord record;
 
@@ -30,6 +27,7 @@ public class UserActor extends AbstractActor {
         }
     }
 
+    // Request message type
     public static class CheckUser {
         public final Integer userId;
 

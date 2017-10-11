@@ -16,12 +16,10 @@ public class FraudWordActor extends AbstractActor {
     @Override
     public Receive createReceive() {
         return receiveBuilder()
-            .match(ExamineWords.class, m -> {
-                sender().tell(new ExamineWordsResult(fraudWordService.examineWords(m.words)), sender());
-            })
             .build();
     }
 
+    // Request message type
     public static class ExamineWords {
         public final List<String> words;
 
@@ -30,6 +28,7 @@ public class FraudWordActor extends AbstractActor {
         }
     }
 
+    // Reply message type
     public static class ExamineWordsResult {
         public final List<FraudWord> fraudWords;
 
