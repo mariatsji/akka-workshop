@@ -537,11 +537,42 @@ class DeathWatchActor extends Actor {
     </slide>
 
     <slide>
+        <hgroup>
+            <h2>Future example</h2>
+        </hgroup>
+        <article>
+        <pre class="prettyprint">
+</pre>
+        </article>
+        <span class="example">ComputeRouter_1.java|kt</span>
+
+
+    </slide>
+
+    <slide>
+        <hgroup>
+            <h2>Futures vs Actors</h2>
+        </hgroup>
+        <article>
+            <ul>
+                <li>Futures suitable for simple request-response</li>
+                <li>Actors suitable for lasting operations
+                    <ul>
+                        <li>Life-cycle, mailbox, supervision and death watch</li>
+                    </ul>
+                </li>
+                <li>Futures preserves ordering</li>
+            </ul>
+        </article>
+    </slide>
+
+
+    <slide>
         <hgroup><h2>Routers</h2></hgroup>
         <article>
             <ul>
                 <li>Routers are actors specifically designed for concurrency</li>
-		<li>Have a group or pool of actors it can route messages to</li>
+		        <li>Have a group or pool of actors it can route messages to</li>
                 <li>Akka comes with different routers</li>
             </ul>
             <img src="figures/routers.png" style="max-height: 300px;" />
