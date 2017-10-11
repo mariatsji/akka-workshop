@@ -55,7 +55,7 @@ public class VettingSubActorTest extends AkkaTest {
 
         Ad ad = createAd();
         createVettingActor().tell(ad, sender.ref());
-        Verdict.VerdictType verdict = sender.expectMsgClass(Verdict.VerdictType.class);
+        Verdict.VerdictType verdict = sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), Verdict.VerdictType.class);
 
         assertThat(verdict, is(Verdict.VerdictType.GOOD));
     }
@@ -69,7 +69,7 @@ public class VettingSubActorTest extends AkkaTest {
             .thenReturn(List.of(new FraudWord("nigeria")));
 
         createVettingActor().tell(createAd(), sender.ref());
-        Verdict.VerdictType verdict = sender.expectMsgClass(Verdict.VerdictType.class);
+        Verdict.VerdictType verdict = sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), Verdict.VerdictType.class);
 
         assertThat(verdict, is(Verdict.VerdictType.BAD));
     }
@@ -84,7 +84,7 @@ public class VettingSubActorTest extends AkkaTest {
 
         Ad ad = createAd();
         createVettingActor().tell(ad, sender.ref());
-        Verdict.VerdictType verdict = sender.expectMsgClass(Verdict.VerdictType.class);
+        Verdict.VerdictType verdict = sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), Verdict.VerdictType.class);
 
         assertThat(verdict, is(Verdict.VerdictType.BAD));
     }
@@ -99,13 +99,13 @@ public class VettingSubActorTest extends AkkaTest {
 
         TestActorRef<VettingActor> vettingActor = createVettingActor();
         sender.send(vettingActor, new GetNumVettedAds());
-        assertThat(sender.expectMsgClass(NumVettedAds.class).numVettedAds, is(0));
+        assertThat(sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), NumVettedAds.class).numVettedAds, is(0));
 
         sender.send(vettingActor, createAd());
-        sender.expectMsgClass(Verdict.VerdictType.class);
+        sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), Verdict.VerdictType.class);
 
         sender.send(vettingActor, new GetNumVettedAds());
-        assertThat(sender.expectMsgClass(NumVettedAds.class).numVettedAds, is(1));
+        assertThat(sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), NumVettedAds.class).numVettedAds, is(1));
     }
 
     @Test
@@ -118,9 +118,9 @@ public class VettingSubActorTest extends AkkaTest {
 
         createVettingActor(sender.ref(), Duration.create(1, TimeUnit.MILLISECONDS));
 
-        assertThat(sender.expectMsgClass(NumVettedAds.class).numVettedAds, is(0));
-        assertThat(sender.expectMsgClass(NumVettedAds.class).numVettedAds, is(0));
-        assertThat(sender.expectMsgClass(NumVettedAds.class).numVettedAds, is(0));
+        assertThat(sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), NumVettedAds.class).numVettedAds, is(0));
+        assertThat(sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), NumVettedAds.class).numVettedAds, is(0));
+        assertThat(sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), NumVettedAds.class).numVettedAds, is(0));
     }
 
     @Test
@@ -135,15 +135,15 @@ public class VettingSubActorTest extends AkkaTest {
         TestActorRef<VettingActor> vettingActor = createVettingActor(numVettedAdsActor.ref(), Duration.create(24, TimeUnit.HOURS));
 
         sender.send(vettingActor, new ReportNumVettedAds());
-        assertThat(numVettedAdsActor.expectMsgClass(NumVettedAds.class).numVettedAds, is(0));
+        assertThat(numVettedAdsActor.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), NumVettedAds.class).numVettedAds, is(0));
 
         sender.send(vettingActor, createAd());
         sender.send(vettingActor, new ReportNumVettedAds());
-        assertThat(numVettedAdsActor.expectMsgClass(NumVettedAds.class).numVettedAds, is(1));
+        assertThat(numVettedAdsActor.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), NumVettedAds.class).numVettedAds, is(1));
 
         sender.send(vettingActor, createAd());
         sender.send(vettingActor, new ReportNumVettedAds());
-        assertThat(numVettedAdsActor.expectMsgClass(NumVettedAds.class).numVettedAds, is(2));
+        assertThat(numVettedAdsActor.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), NumVettedAds.class).numVettedAds, is(2));
     }
 
     @Test
@@ -160,11 +160,11 @@ public class VettingSubActorTest extends AkkaTest {
 
         TestActorRef<VettingActor> vettingActor = createVettingActor();
         sender.send(vettingActor, new Ad(1, "Sofa", "Selling sofa"));
-        sender.expectMsgClass(Verdict.VerdictType.class);
+        sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), Verdict.VerdictType.class);
         sender.send(vettingActor, new Ad(2, "Sofa", "Selling sofa"));
 
         sender.send(vettingActor, new GetNumVettedAds());
-        assertThat(sender.expectMsgClass(NumVettedAds.class).numVettedAds, is(1));
+        assertThat(sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), NumVettedAds.class).numVettedAds, is(1));
     }
 
     private Ad createAd() {

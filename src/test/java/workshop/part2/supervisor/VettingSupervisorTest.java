@@ -1,10 +1,13 @@
 package workshop.part2.supervisor;
 
+import java.util.concurrent.TimeUnit;
+
 import akka.actor.Props;
 import akka.actor.SupervisorStrategy;
 import akka.testkit.TestActorRef;
 import akka.testkit.TestProbe;
 import org.junit.Test;
+import scala.concurrent.duration.Duration;
 import workshop.common.ad.Ad;
 import workshop.part1.AkkaTest;
 import workshop.part1.Verdict.VerdictType;
@@ -28,7 +31,7 @@ public class VettingSupervisorTest extends AkkaTest {
         Ad ad = createAd(123);
         createVettingSupervisor(vettingActorFactory).tell(ad, sender.ref());
 
-        assertThat(vettingActor.expectMsgClass(Ad.class), is(ad));
+        assertThat(vettingActor.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), Ad.class), is(ad));
     }
 
     @Test
@@ -42,10 +45,10 @@ public class VettingSupervisorTest extends AkkaTest {
         Ad ad = createAd(123);
         createVettingSupervisor(vettingActorFactory).tell(ad, sender.ref());
 
-        vettingActor.expectMsgClass(Ad.class);
+        vettingActor.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), Ad.class);
         vettingActor.reply(VerdictType.GOOD);
 
-        assertThat(sender.expectMsgClass(VerdictType.class), is(VerdictType.GOOD));
+        assertThat(sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), VerdictType.class), is(VerdictType.GOOD));
     }
 
     @Test
