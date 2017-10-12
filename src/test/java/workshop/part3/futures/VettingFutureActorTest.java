@@ -35,13 +35,13 @@ public class VettingFutureActorTest extends AkkaTest {
     public void acceptsAdWithNoFraudWordsAndUserWithoutCriminalRecord() {
         sender.send(createVettingActor(), createAd());
 
-        userActor.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), CheckUser.class);
+        userActor.expectMsgClass(Duration.create(100, TimeUnit.MILLISECONDS), CheckUser.class);
         userActor.reply(new CheckUserResult(UserCriminalRecord.GOOD));
 
-        fraudWordActor.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), FraudWordActor.ExamineWords.class);
+        fraudWordActor.expectMsgClass(Duration.create(100, TimeUnit.MILLISECONDS), FraudWordActor.ExamineWords.class);
         fraudWordActor.reply(new ExamineWordsResult(List.empty()));
 
-        Verdict.VerdictType verdict = sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), Verdict.VerdictType.class);
+        Verdict.VerdictType verdict = sender.expectMsgClass(Duration.create(100, TimeUnit.MILLISECONDS), Verdict.VerdictType.class);
 
         assertThat(verdict, is(Verdict.VerdictType.GOOD));
     }
@@ -50,13 +50,13 @@ public class VettingFutureActorTest extends AkkaTest {
     public void doesNotAcceptAdWithFraudWords() {
         sender.send(createVettingActor(), createAd());
 
-        userActor.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), CheckUser.class);
+        userActor.expectMsgClass(Duration.create(100, TimeUnit.MILLISECONDS), CheckUser.class);
         userActor.reply(new CheckUserResult(UserCriminalRecord.GOOD));
 
-        fraudWordActor.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), FraudWordActor.ExamineWords.class);
+        fraudWordActor.expectMsgClass(Duration.create(100, TimeUnit.MILLISECONDS), FraudWordActor.ExamineWords.class);
         fraudWordActor.reply(new ExamineWordsResult(List.of(new FraudWord("westernunion"))));
 
-        Verdict.VerdictType verdict = sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), Verdict.VerdictType.class);
+        Verdict.VerdictType verdict = sender.expectMsgClass(Duration.create(100, TimeUnit.MILLISECONDS), Verdict.VerdictType.class);
 
         assertThat(verdict, is(Verdict.VerdictType.BAD));
     }
@@ -65,13 +65,13 @@ public class VettingFutureActorTest extends AkkaTest {
     public void doesNotAcceptAdWithUserHavingCriminalRecord() {
         sender.send(createVettingActor(), createAd());
 
-        userActor.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), CheckUser.class);
+        userActor.expectMsgClass(Duration.create(100, TimeUnit.MILLISECONDS), CheckUser.class);
         userActor.reply(new CheckUserResult(UserCriminalRecord.EVIL));
 
-        fraudWordActor.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), FraudWordActor.ExamineWords.class);
+        fraudWordActor.expectMsgClass(Duration.create(100, TimeUnit.MILLISECONDS), FraudWordActor.ExamineWords.class);
         fraudWordActor.reply(new ExamineWordsResult(List.empty()));
 
-        Verdict.VerdictType verdict = sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), Verdict.VerdictType.class);
+        Verdict.VerdictType verdict = sender.expectMsgClass(Duration.create(100, TimeUnit.MILLISECONDS), Verdict.VerdictType.class);
 
         assertThat(verdict, is(Verdict.VerdictType.BAD));
     }
@@ -86,7 +86,7 @@ public class VettingFutureActorTest extends AkkaTest {
         schedule(Duration.create(500, TimeUnit.MILLISECONDS), vettingActor, new CheckUserResult(UserCriminalRecord.GOOD));
         schedule(Duration.create(500, TimeUnit.MILLISECONDS), vettingActor, new ExamineWordsResult(List.empty()));
 
-        assertThat(sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), Verdict.VerdictType.class), is(Verdict.VerdictType.PENDING));
+        assertThat(sender.expectMsgClass(Duration.create(100, TimeUnit.MILLISECONDS), Verdict.VerdictType.class), is(Verdict.VerdictType.PENDING));
     }
 
     private Ad createAd() {
