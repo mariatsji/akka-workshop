@@ -92,7 +92,7 @@ class VettingActorTest : AkkaTest() {
         assertThat(sender.expectMsgClass(NumVettedAds::class.java).numVettedAds, equalTo(0))
 
         sender.send(vettingActor, createAd())
-        sender.expectMsgClass(Verdict::class.java)
+        sender.expectMsgClass(VerdictType::class.java)
 
         sender.send(vettingActor, GetNumVettedAds())
         assertThat(sender.expectMsgClass(NumVettedAds::class.java).numVettedAds, equalTo(1))
@@ -145,7 +145,7 @@ class VettingActorTest : AkkaTest() {
 
         val vettingActor = createVettingActor()
         sender.send(vettingActor, createAd(userId = 1))
-        sender.expectMsgClass(Verdict::class.java)
+        sender.expectMsgClass(VerdictType::class.java)
         sender.send(vettingActor, createAd(userId = 2))
 
         sender.send(vettingActor, GetNumVettedAds())
