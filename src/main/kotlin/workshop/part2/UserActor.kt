@@ -6,12 +6,8 @@ import workshop.common.userservice.UserService
 
 class UserActor(private val userService: UserService) : UntypedActor() {
 
-    override fun onReceive(msg: Any?) = when (msg) {
-        is CheckUser -> {
-            val result = userService.vettUser(msg.userId)
-            sender().tell(CheckUserResult(result), sender())
-        }
-        else -> unhandled(msg)
+    override fun onReceive(message: Any?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     class CheckUserResult(val record: UserCriminalRecord)

@@ -10,12 +10,14 @@ import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Test
 import org.mockito.Mockito.mock
+import scala.concurrent.duration.Duration
 import workshop.common.ad.Ad
 import workshop.part1.AkkaTest
 import workshop.part1.VerdictType
 import workshop.part2.supervisor.UserNotFoundException
 import workshop.part2.supervisor.VettingActorFactory
 import workshop.part2.supervisor.VettingSupervisor
+import java.util.concurrent.TimeUnit
 
 
 class VettingSupervisorTest : AkkaTest() {
@@ -30,7 +32,7 @@ class VettingSupervisorTest : AkkaTest() {
         val ad = createAd(123)
         createVettingSupervisor(vettingActorFactory).tell(ad, sender.ref())
 
-        assertThat(sender.expectMsgClass(Ad::class.java), equalTo(ad))
+        assertThat(sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), Ad::class.java), equalTo(ad))
     }
 
     @Test
@@ -44,10 +46,10 @@ class VettingSupervisorTest : AkkaTest() {
         val ad = createAd(123)
         createVettingSupervisor(vettingActorFactory).tell(ad, sender.ref())
 
-        vettingActor.expectMsgClass(Ad::class.java)
+        vettingActor.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), Ad::class.java)
         vettingActor.reply(VerdictType.GOOD)
 
-        assertThat(sender.expectMsgClass(VerdictType::class.java), equalTo(VerdictType.GOOD))
+        assertThat(sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), VerdictType::class.java), equalTo(VerdictType.GOOD))
     }
 
     @Test

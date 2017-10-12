@@ -30,13 +30,13 @@ class VettingActorTest : AkkaTest() {
     fun acceptsAdWithNoFraudWordsAndUserWithoutCriminalRecord() {
         sender.send(createVettingActor(), createAd())
 
-        userActor.expectMsgClass(CheckUser::class.java)
+        userActor.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), CheckUser::class.java)
         userActor.reply(CheckUserResult(UserCriminalRecord.GOOD))
 
-        fraudWordActor.expectMsgClass(FraudWordActor.ExamineWords::class.java)
+        fraudWordActor.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), FraudWordActor.ExamineWords::class.java)
         fraudWordActor.reply(ExamineWordsResult(emptyList()))
 
-        val verdict = sender.expectMsgClass(VerdictType::class.java)
+        val verdict = sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), VerdictType::class.java)
 
         assertThat(verdict, equalTo(VerdictType.GOOD))
     }
@@ -45,13 +45,13 @@ class VettingActorTest : AkkaTest() {
     fun doesNotAcceptAdWithFraudWords() {
         sender.send(createVettingActor(), createAd())
 
-        userActor.expectMsgClass(CheckUser::class.java)
+        userActor.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), CheckUser::class.java)
         userActor.reply(CheckUserResult(UserCriminalRecord.GOOD))
 
-        fraudWordActor.expectMsgClass(FraudWordActor.ExamineWords::class.java)
+        fraudWordActor.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), FraudWordActor.ExamineWords::class.java)
         fraudWordActor.reply(ExamineWordsResult(listOf(FraudWord("westernunion"))))
 
-        val verdict = sender.expectMsgClass(VerdictType::class.java)
+        val verdict = sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), VerdictType::class.java)
 
         assertThat(verdict, equalTo(VerdictType.BAD))
     }
@@ -60,13 +60,13 @@ class VettingActorTest : AkkaTest() {
     fun doesNotAcceptAdWithUserHavingCriminalRecord() {
         sender.send(createVettingActor(), createAd())
 
-        userActor.expectMsgClass(CheckUser::class.java)
+        userActor.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), CheckUser::class.java)
         userActor.reply(CheckUserResult(UserCriminalRecord.EVIL))
 
-        fraudWordActor.expectMsgClass(FraudWordActor.ExamineWords::class.java)
+        fraudWordActor.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), FraudWordActor.ExamineWords::class.java)
         fraudWordActor.reply(ExamineWordsResult(emptyList()))
 
-        val verdict = sender.expectMsgClass(VerdictType::class.java)
+        val verdict = sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), VerdictType::class.java)
 
         assertThat(verdict, equalTo(VerdictType.BAD))
     }
@@ -80,7 +80,7 @@ class VettingActorTest : AkkaTest() {
         schedule(Duration.create(100, TimeUnit.MILLISECONDS), vettingActor, CheckUserResult(UserCriminalRecord.GOOD))
         schedule(Duration.create(100, TimeUnit.MILLISECONDS), vettingActor, ExamineWordsResult(emptyList()))
 
-        assertThat(sender.expectMsgClass(VerdictType::class.java), equalTo(VerdictType.PENDING))
+        assertThat(sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), VerdictType::class.java), equalTo(VerdictType.PENDING))
     }
 
     @Test
@@ -93,7 +93,7 @@ class VettingActorTest : AkkaTest() {
         sender.send(vettingActor, createAd())
         userActor.send(userActor.ref(), PoisonPill.getInstance())
 
-        assertThat(sender.expectMsgClass(VerdictType::class.java), equalTo(VerdictType.PENDING))
+        assertThat(sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), VerdictType::class.java), equalTo(VerdictType.PENDING))
     }
 
     @Test
@@ -102,14 +102,14 @@ class VettingActorTest : AkkaTest() {
         sender.watch(vettingActor)
         sender.send(vettingActor, createAd())
 
-        userActor.expectMsgClass(CheckUser::class.java)
+        userActor.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), CheckUser::class.java)
         userActor.reply(CheckUserResult(UserCriminalRecord.GOOD))
 
-        fraudWordActor.expectMsgClass(FraudWordActor.ExamineWords::class.java)
+        fraudWordActor.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), FraudWordActor.ExamineWords::class.java)
         fraudWordActor.reply(ExamineWordsResult(emptyList()))
 
-        sender.expectMsgClass(VerdictType::class.java)
-        sender.expectMsgClass(Terminated::class.java)
+        sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), VerdictType::class.java)
+        sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), Terminated::class.java)
     }
 
     @Test
@@ -118,14 +118,14 @@ class VettingActorTest : AkkaTest() {
         sender.watch(vettingActor)
         sender.send(vettingActor, createAd())
 
-        userActor.expectMsgClass(CheckUser::class.java)
+        userActor.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), CheckUser::class.java)
         userActor.reply(CheckUserResult(UserCriminalRecord.GOOD))
 
-        fraudWordActor.expectMsgClass(FraudWordActor.ExamineWords::class.java)
+        fraudWordActor.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), FraudWordActor.ExamineWords::class.java)
         fraudWordActor.reply(ExamineWordsResult(listOf(FraudWord("westernunion"))))
 
-        sender.expectMsgClass(VerdictType::class.java)
-        sender.expectMsgClass(Terminated::class.java)
+        sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), VerdictType::class.java)
+        sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), Terminated::class.java)
     }
 
     @Test
@@ -137,8 +137,8 @@ class VettingActorTest : AkkaTest() {
         schedule(Duration.create(100, TimeUnit.MILLISECONDS), vettingActor, CheckUserResult(UserCriminalRecord.GOOD))
         schedule(Duration.create(100, TimeUnit.MILLISECONDS), vettingActor, ExamineWordsResult(emptyList()))
 
-        sender.expectMsgClass(VerdictType::class.java)
-        sender.expectMsgClass(Terminated::class.java)
+        sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), VerdictType::class.java)
+        sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), Terminated::class.java)
     }
 
     @Test
@@ -151,8 +151,8 @@ class VettingActorTest : AkkaTest() {
 
         userActor.send(userActor.ref(), PoisonPill.getInstance())
 
-        sender.expectMsgClass(VerdictType::class.java)
-        sender.expectMsgClass(Terminated::class.java)
+        sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), VerdictType::class.java)
+        sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), Terminated::class.java)
     }
 
     private fun createAd(): Ad {
