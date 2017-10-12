@@ -541,10 +541,19 @@ class DeathWatchActor extends Actor {
             <h2>Future example</h2>
         </hgroup>
         <article>
-        <pre class="prettyprint">
+        <pre class="prettyprint">val f1 = Future { 1 + 2 }
+val f2 = Future { 2 + 3 }
+
+val futures: Future[List[Int]] = Future.sequence(List(f1, f2))
+
+futures.map(numbers => numbers.sum)
+  .recoverWith {
+    case e: NullPointerException => Future { 0 }
+  }
+  .onComplete(result => println(result))
 </pre>
         </article>
-        <span class="example">ComputeRouter_1.java|kt</span>
+        <span class="example">ComputeFuture.java|kt</span>
 
 
     </slide>
@@ -558,10 +567,10 @@ class DeathWatchActor extends Actor {
                 <li>Futures suitable for simple request-response</li>
                 <li>Actors suitable for lasting operations
                     <ul>
-                        <li>Life-cycle, mailbox, supervision and death watch</li>
+                        <li>Mailbox, Life-cycle, supervision and death watch</li>
                     </ul>
                 </li>
-                <li>Futures preserves ordering</li>
+                <li>Futures makes it easier to preserve ordering</li>
             </ul>
         </article>
     </slide>
