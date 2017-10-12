@@ -8,9 +8,9 @@ import akka.http.javadsl.model.StatusCodes;
 import akka.http.javadsl.server.AllDirectives;
 import akka.http.javadsl.server.Route;
 import akka.pattern.Patterns;
+import scala.compat.java8.FutureConverters;
 import scala.concurrent.Future;
 import scala.reflect.ClassTag$;
-import workshop.common.Utils;
 import workshop.common.ad.Ad;
 import workshop.part1.Verdict;
 
@@ -67,11 +67,9 @@ class HttpRoutes extends AllDirectives {
     private Route verdict() {
         return get(() ->
                 pathPrefix("evaluate", () ->
-                        path(integerSegment(), adId -> {
-                            return cache.get(adId)
-                                    .map(verdict -> complete(StatusCodes.OK, verdict, Jackson.marshaller()))
-                                    .getOrElse(() -> complete(StatusCodes.NOT_FOUND, String.format("No such vetting: %d", adId)));
-                                }
+                        path(integerSegment(), adId -> cache.get(adId)
+                                .map(verdict -> complete(StatusCodes.OK, verdict, Jackson.marshaller()))
+                                .getOrElse(() -> complete(StatusCodes.NOT_FOUND, String.format("No such vetting: %d", adId)))
                         )));
     }
 
@@ -82,7 +80,7 @@ class HttpRoutes extends AllDirectives {
         Future<Verdict.VerdictType> actorVerdict = Patterns.ask(vettingActor, ad, 1000)
                 .mapTo(ClassTag$.MODULE$.apply(Verdict.VerdictType.class));
 
-        CompletionStage<Verdict.VerdictType> vettingVerdict = Utils.toJavaFuture(actorVerdict);
+        CompletionStage<Verdict.VerdictType> vettingVerdict = FutureConverters.toJava(actorVerdict);
 
         return vettingVerdict.whenCompleteAsync((Verdict.VerdictType vt, Throwable error) -> {
             if (error != null) {
