@@ -16,5 +16,5 @@ class VettingSubActor(private val userActor: ActorRef,
 
     override fun onReceive(msg: Any?) {}
 
-    private class TimeoutVetting
+    object TimeoutVetting
 }
