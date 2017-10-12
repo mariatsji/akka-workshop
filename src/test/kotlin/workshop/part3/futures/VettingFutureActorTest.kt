@@ -17,7 +17,7 @@ import workshop.part2.FraudWordActor
 import workshop.part2.FraudWordActor.ExamineWordsResult
 import workshop.part2.UserActor.CheckUser
 import workshop.part2.UserActor.CheckUserResult
-import workshop.part2.subactor.VettingActor
+import workshop.part2.subactor.VettingSubActor
 import java.util.concurrent.TimeUnit
 
 class VettingFutureActorTest : AkkaTest() {
@@ -87,7 +87,7 @@ class VettingFutureActorTest : AkkaTest() {
         return Ad(1, "Sofa", "Selling sofa")
     }
 
-    private fun createVettingActor(timeoutVetting: FiniteDuration = Duration.create(10, TimeUnit.SECONDS)): TestActorRef<VettingActor> {
+    private fun createVettingActor(timeoutVetting: FiniteDuration = Duration.create(10, TimeUnit.SECONDS)): TestActorRef<VettingSubActor> {
         return TestActorRef.create(system, Props.create(VettingFutureActor::class.java) { VettingFutureActor(userActor.ref(), fraudWordActor.ref(), timeoutVetting) })
     }
 }

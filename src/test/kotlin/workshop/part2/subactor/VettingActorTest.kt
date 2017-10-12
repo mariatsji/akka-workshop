@@ -159,7 +159,7 @@ class VettingActorTest : AkkaTest() {
         return Ad(1, "Sofa", "Selling sofa")
     }
 
-    private fun createVettingActor(timeoutVetting: FiniteDuration = Duration.create(10, TimeUnit.SECONDS)): TestActorRef<VettingActor> {
-        return TestActorRef.create(system, Props.create(VettingActor::class.java) { VettingActor(userActor.ref(), fraudWordActor.ref(), timeoutVetting) })
+    private fun createVettingActor(timeoutVetting: FiniteDuration = Duration.create(10, TimeUnit.SECONDS)): TestActorRef<VettingSubActor> {
+        return TestActorRef.create(system, Props.create(VettingSubActor::class.java) { VettingSubActor(userActor.ref(), fraudWordActor.ref(), timeoutVetting) })
     }
 }

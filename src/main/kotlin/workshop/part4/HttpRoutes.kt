@@ -7,14 +7,15 @@ import akka.http.javadsl.server.AllDirectives
 import akka.http.javadsl.server.PathMatchers.integerSegment
 import akka.http.javadsl.server.Route
 import akka.pattern.Patterns
+import akka.util.Timeout
 import scala.compat.java8.FutureConverters
-import scala.reflect.`ClassTag$`
 import workshop.common.ad.Ad
 import workshop.part1.Verdict
 import workshop.part1.VerdictType
 import java.util.concurrent.CompletionStage
+import java.util.concurrent.TimeUnit
 
-internal class HttpRoutes(private val vettingActor: ActorRef, private val cache: VerdictCache) : AllDirectives() {
+class HttpRoutes(private val vettingActor: ActorRef, private val cache: VerdictCache) : AllDirectives() {
 
     /**
      * Dont forget to register your route here - otherwise you will be pondering 404s!
@@ -46,8 +47,11 @@ internal class HttpRoutes(private val vettingActor: ActorRef, private val cache:
                             .getOrElse {
                                 completeOrRecoverWith(
                                         { doVetting(ad) },
-                                        Jackson.marshaller()
-                                ) { t -> error() }
+                                        Jackson.marshaller(),
+                                        { t ->
+                                            t.printStackTrace()
+                                            error() }
+                                )
                             }
                 }
             }
@@ -71,12 +75,11 @@ internal class HttpRoutes(private val vettingActor: ActorRef, private val cache:
 
         val verdictId = ad.adId.toString()
 
-        val actorVerdict = Patterns.ask(vettingActor, ad, 1000)
-                .mapTo(`ClassTag$`.`MODULE$`.apply<VerdictType>(VerdictType::class.java))
+        val vettingVerdict = ask<VerdictType>(vettingActor, ad)
 
-        val vettingVerdict = FutureConverters.toJava(actorVerdict)
 
-        return vettingVerdict.whenCompleteAsync { vt: VerdictType, error: Throwable ->
+        return vettingVerdict.whenCompleteAsync { vt: VerdictType, error: Throwable? ->
+            println("triggered future complete async!")
             if (error != null) {
                 vettingVerdict.thenRunAsync { Verdict(verdictId, VerdictType.PENDING) }
             } else {
@@ -85,8 +88,14 @@ internal class HttpRoutes(private val vettingActor: ActorRef, private val cache:
                     cache.put(ad, verdict)
                 }
             }
-        }.thenApply { vt -> Verdict(verdictId, vt) }
+        }.thenApply {
+            vt -> Verdict(verdictId, vt)
+        }
 
+    }
+
+    private fun <T> ask(receiver: ActorRef, msg: Any): CompletionStage<T> {
+        return FutureConverters.toJava(Patterns.ask(receiver, msg, Timeout(1, TimeUnit.SECONDS))) as CompletionStage<T>
     }
 
 }
