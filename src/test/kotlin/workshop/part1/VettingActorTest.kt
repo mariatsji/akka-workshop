@@ -45,7 +45,7 @@ class VettingActorTest : AkkaTest() {
 
         val ad = createAd()
         createVettingActor().tell(ad, sender.ref())
-        val verdict = sender.expectMsgClass(VerdictType::class.java)
+        val verdict = sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), VerdictType::class.java)
 
         assertThat(verdict, equalTo(VerdictType.GOOD))
     }
@@ -59,7 +59,7 @@ class VettingActorTest : AkkaTest() {
                 .thenReturn(listOf(FraudWord("nigeria")))
 
         createVettingActor().tell(createAd(), sender.ref())
-        val verdict = sender.expectMsgClass(VerdictType::class.java)
+        val verdict = sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), VerdictType::class.java)
 
         assertThat(verdict, equalTo(VerdictType.BAD))
     }
@@ -74,7 +74,7 @@ class VettingActorTest : AkkaTest() {
 
         val ad = createAd()
         createVettingActor().tell(ad, sender.ref())
-        val verdict = sender.expectMsgClass(VerdictType::class.java)
+        val verdict = sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), (VerdictType::class.java))
 
         assertThat(verdict, equalTo(VerdictType.BAD))
     }
@@ -89,22 +89,22 @@ class VettingActorTest : AkkaTest() {
 
         val vettingActor = createVettingActor()
         sender.send(vettingActor, GetNumVettedAds())
-        assertThat(sender.expectMsgClass(NumVettedAds::class.java).numVettedAds, equalTo(0))
+        assertThat(sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), NumVettedAds::class.java).numVettedAds, equalTo(0))
 
         sender.send(vettingActor, createAd())
-        sender.expectMsgClass(VerdictType::class.java)
+        sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), VerdictType::class.java)
 
         sender.send(vettingActor, GetNumVettedAds())
-        assertThat(sender.expectMsgClass(NumVettedAds::class.java).numVettedAds, equalTo(1))
+        assertThat(sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), NumVettedAds::class.java).numVettedAds, equalTo(1))
     }
 
     @Test
     fun reportsNumVettedAdsEveryConfiguredInterval() {
         createVettingActor(sender.ref(), Duration.create(1, TimeUnit.MILLISECONDS))
 
-        assertThat(sender.expectMsgClass(NumVettedAds::class.java).numVettedAds, equalTo(0))
-        assertThat(sender.expectMsgClass(NumVettedAds::class.java).numVettedAds, equalTo(0))
-        assertThat(sender.expectMsgClass(NumVettedAds::class.java).numVettedAds, equalTo(0))
+        assertThat(sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), NumVettedAds::class.java).numVettedAds, equalTo(0))
+        assertThat(sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), NumVettedAds::class.java).numVettedAds, equalTo(0))
+        assertThat(sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), NumVettedAds::class.java).numVettedAds, equalTo(0))
     }
 
     @Test
@@ -119,15 +119,15 @@ class VettingActorTest : AkkaTest() {
         val vettingActor = createVettingActor(numVettedAdsActor.ref(), Duration.create(24, TimeUnit.HOURS))
 
         sender.send(vettingActor, ReportNumVettedAds())
-        assertThat(numVettedAdsActor.expectMsgClass(NumVettedAds::class.java).numVettedAds, equalTo(0))
+        assertThat(numVettedAdsActor.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), NumVettedAds::class.java).numVettedAds, equalTo(0))
 
         sender.send(vettingActor, createAd())
         sender.send(vettingActor, ReportNumVettedAds())
-        assertThat(numVettedAdsActor.expectMsgClass(NumVettedAds::class.java).numVettedAds, equalTo(1))
+        assertThat(numVettedAdsActor.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), NumVettedAds::class.java).numVettedAds, equalTo(1))
 
         sender.send(vettingActor, createAd())
         sender.send(vettingActor, ReportNumVettedAds())
-        assertThat(numVettedAdsActor.expectMsgClass(NumVettedAds::class.java).numVettedAds, equalTo(2))
+        assertThat(numVettedAdsActor.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), NumVettedAds::class.java).numVettedAds, equalTo(2))
     }
 
     @Test
@@ -145,11 +145,11 @@ class VettingActorTest : AkkaTest() {
 
         val vettingActor = createVettingActor()
         sender.send(vettingActor, createAd(userId = 1))
-        sender.expectMsgClass(VerdictType::class.java)
+        sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), VerdictType::class.java)
         sender.send(vettingActor, createAd(userId = 2))
 
         sender.send(vettingActor, GetNumVettedAds())
-        assertThat(sender.expectMsgClass(NumVettedAds::class.java).numVettedAds, equalTo(1))
+        assertThat(sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), NumVettedAds::class.java).numVettedAds, equalTo(1))
     }
 
     private fun createAd(userId: Int = 1): Ad {
