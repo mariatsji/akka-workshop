@@ -29,13 +29,13 @@ class VettingFutureActorTest : AkkaTest() {
     fun acceptsAdWithNoFraudWordsAndUserWithoutCriminalRecord() {
         sender.send(createVettingActor(), createAd())
 
-        userActor.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), CheckUser::class.java)
+        userActor.expectMsgClass(Duration.create(100, TimeUnit.MILLISECONDS), CheckUser::class.java)
         userActor.reply(CheckUserResult(UserCriminalRecord.GOOD))
 
-        fraudWordActor.expectMsgClass( Duration.create(0, TimeUnit.SECONDS), FraudWordActor.ExamineWords::class.java)
+        fraudWordActor.expectMsgClass( Duration.create(100, TimeUnit.MILLISECONDS), FraudWordActor.ExamineWords::class.java)
         fraudWordActor.reply(ExamineWordsResult(emptyList()))
 
-        val verdict = sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), VerdictType::class.java)
+        val verdict = sender.expectMsgClass(Duration.create(100, TimeUnit.MILLISECONDS), VerdictType::class.java)
 
         assertThat(verdict, equalTo(VerdictType.GOOD))
     }
@@ -44,13 +44,13 @@ class VettingFutureActorTest : AkkaTest() {
     fun doesNotAcceptAdWithFraudWords() {
         sender.send(createVettingActor(), createAd())
 
-        userActor.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), CheckUser::class.java)
+        userActor.expectMsgClass(Duration.create(100, TimeUnit.MILLISECONDS), CheckUser::class.java)
         userActor.reply(CheckUserResult(UserCriminalRecord.GOOD))
 
-        fraudWordActor.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), FraudWordActor.ExamineWords::class.java)
+        fraudWordActor.expectMsgClass(Duration.create(100, TimeUnit.MILLISECONDS), FraudWordActor.ExamineWords::class.java)
         fraudWordActor.reply(ExamineWordsResult(listOf(FraudWord("westernunion"))))
 
-        val verdict = sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), VerdictType::class.java)
+        val verdict = sender.expectMsgClass(Duration.create(100, TimeUnit.MILLISECONDS), VerdictType::class.java)
 
         assertThat(verdict, equalTo(VerdictType.BAD))
     }
@@ -59,13 +59,13 @@ class VettingFutureActorTest : AkkaTest() {
     fun doesNotAcceptAdWithUserHavingCriminalRecord() {
         sender.send(createVettingActor(), createAd())
 
-        userActor.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), CheckUser::class.java)
+        userActor.expectMsgClass(Duration.create(100, TimeUnit.MILLISECONDS), CheckUser::class.java)
         userActor.reply(CheckUserResult(UserCriminalRecord.EVIL))
 
-        fraudWordActor.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), FraudWordActor.ExamineWords::class.java)
+        fraudWordActor.expectMsgClass(Duration.create(100, TimeUnit.MILLISECONDS), FraudWordActor.ExamineWords::class.java)
         fraudWordActor.reply(ExamineWordsResult(emptyList()))
 
-        val verdict = sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), VerdictType::class.java)
+        val verdict = sender.expectMsgClass(Duration.create(100, TimeUnit.MILLISECONDS), VerdictType::class.java)
 
         assertThat(verdict, equalTo(VerdictType.BAD))
     }
@@ -80,7 +80,7 @@ class VettingFutureActorTest : AkkaTest() {
         schedule(Duration.create(500, TimeUnit.MILLISECONDS), vettingActor, CheckUserResult(UserCriminalRecord.GOOD))
         schedule(Duration.create(500, TimeUnit.MILLISECONDS), vettingActor, ExamineWordsResult(emptyList()))
 
-        assertThat(sender.expectMsgClass(Duration.create(0, TimeUnit.SECONDS), VerdictType::class.java), equalTo(VerdictType.PENDING))
+        assertThat(sender.expectMsgClass(Duration.create(100, TimeUnit.MILLISECONDS), VerdictType::class.java), equalTo(VerdictType.PENDING))
     }
 
     private fun createAd(): Ad {
