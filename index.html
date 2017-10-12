@@ -541,8 +541,15 @@ class DeathWatchActor extends Actor {
             <h2>Future example</h2>
         </hgroup>
         <article>
-        <pre class="prettyprint">val f1 = Future { 1 + 2 }
-val f2 = Future { 2 + 3 }
+        <pre class="prettyprint">class ComputeActor extends Actor {
+  def receive = { case s : String => sender ! s.length }
+}
+
+val system = ActorSystem()
+val computeActor = system.actorOf(Props(new ComputeActor()))
+
+val f1 = (computeActor ? "abc").mapTo[Int]
+val f2 = (computeActor ? "bcd").mapTo[Int]
 
 val futures: Future[List[Int]] = Future.sequence(List(f1, f2))
 
@@ -551,6 +558,7 @@ futures.map(numbers => numbers.sum)
     case e: NullPointerException => Future { 0 }
   }
   .onComplete(result => println(result))
+
 </pre>
         </article>
         <span class="example">ComputeFuture.java|kt</span>
@@ -689,22 +697,6 @@ object ComputeRouterExample extends App {
         </article>
     </slide>
 
-    <slide>
-        <hgroup>
-            <h2>Datainn - Lessons learned with Akka</h2>
-        </hgroup>
-        <article>
-            <ul class="build">
-                <li></li>
-                <li>Keep actors small and simple</li>
-                <li>Hard to understand actor hierarchy</li>
-                <li>High performance, but can be difficult to configure</li>
-                <li>Abstractions often low-level, despite being a large "toolkit"</li>
-                <li>Actor supervision create boiler plate code</li>
-            </ul>
-        </article>
-    </slide>
-
    <slide>
         <hgroup>
             <h2>MultiScreen - Actor Design</h2>
@@ -713,6 +705,30 @@ object ComputeRouterExample extends App {
             <p class="flexbox vcenter">
                 <img src="figures/atvvod-architecture.png" style="max-height: 530px" />
             </p>
+        </article>
+    </slide>
+
+    <slide>
+        <hgroup>
+            <h2>Lessons learned with Akka</h2>
+        </hgroup>
+        <article>
+            <ul class="build">
+                <li>Keep actors small and simple</li>
+                <li>Actor hierarchies are easy to reason about
+                    <ul>
+                        <li>Design drawings actually match code base</li>
+                    </ul>
+                </li>
+                <li>Actor hierarchies are hard to understand
+                    <ul>
+                        <li>No synchronous methods call. Asynchronicity is harder.</li>
+                    </ul>
+                </li>
+                <li>High performance, but can be difficult to configure</li>
+                <li>Abstractions somewhat low-level</li>
+                <li>Actor supervision creates boiler plate code</li>
+            </ul>
         </article>
     </slide>
 
