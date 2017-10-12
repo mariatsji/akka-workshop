@@ -6,7 +6,7 @@ import workshop.common.ad.Ad
 import workshop.part1.Verdict
 import java.util.concurrent.ConcurrentHashMap
 
-class VerdictCache {
+open class VerdictCache {
 
     private val cache = ConcurrentHashMap<Ad, Verdict>()
 
@@ -14,7 +14,7 @@ class VerdictCache {
         return Option.of(cache[ad])
     }
 
-    operator fun get(adId: Int?): Option<Verdict> {
+    open operator fun get(adId: Int?): Option<Verdict> {
         return Stream.ofAll(cache.keys)
                 .find { a -> a.adId == adId }
                 .map({ cache[it] })
