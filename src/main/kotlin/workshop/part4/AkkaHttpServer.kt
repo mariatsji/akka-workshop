@@ -26,7 +26,7 @@ class AkkaHttpServer {
 
         val flow = HttpRoutes(vettingSupervisor, VerdictCache()).registerRoutes().flow(system, materializer)
 
-        val binding = http.bindAndHandle(flow, ConnectHttp.toHost(
+        http.bindAndHandle(flow, ConnectHttp.toHost(
                 HOST_BINDING, PORT), materializer)
 
         println(String.format("Server online at http://%s:%d/", HOST_BINDING, PORT))

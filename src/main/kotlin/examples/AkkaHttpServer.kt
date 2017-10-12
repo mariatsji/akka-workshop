@@ -26,7 +26,7 @@ class AkkaHttpServer : AllDirectives() {
                 get {
                     pathPrefix("item") {
                         path(longSegment()) { id: Long ->
-                            val futureMaybeItem = fetchItem(id.toLong())
+                            val futureMaybeItem = fetchItem(id)
                             val routeAdapter = onSuccess({ futureMaybeItem }
                             ) { maybeItem ->
                                 maybeItem.map({ item -> completeOK(item, Jackson.marshaller()) })
@@ -41,7 +41,7 @@ class AkkaHttpServer : AllDirectives() {
                         entity(Jackson.unmarshaller(Order::class.java)) { order ->
                             val futureSaved = saveOrder(order)
                             onSuccess({ futureSaved }
-                            ) { done -> complete("order created") }
+                            ) { _ -> complete("order created") }
                         }
                     }
                 }
@@ -55,6 +55,7 @@ class AkkaHttpServer : AllDirectives() {
 
     // (fake) async database query api
     private fun saveOrder(order: Order): CompletionStage<Done> {
+        println(order)
         return CompletableFuture.completedFuture(Done.getInstance())
     }
 
@@ -81,7 +82,7 @@ class AkkaHttpServer : AllDirectives() {
 
             val flow = app.createRoute().flow(system, materializer)
 
-            val binding = http.bindAndHandle(flow, ConnectHttp.toHost(
+            http.bindAndHandle(flow, ConnectHttp.toHost(
                     HOST_BINDING, PORT), materializer)
 
             System.out.println(String.format("Server online at http://%s:%d/", HOST_BINDING, PORT))

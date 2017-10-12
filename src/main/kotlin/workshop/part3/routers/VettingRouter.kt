@@ -44,9 +44,9 @@ class VettingRouter : AbstractActor() {
 
     override fun supervisorStrategy(): SupervisorStrategy {
         return OneForOneStrategy(10, Duration.create(1, MINUTES), DeciderBuilder
-                .match(UserNotFoundException::class.java) { e -> resume() }
-                .match(NullPointerException::class.java) { e -> restart() }
-                .matchAny { e -> escalate() }
+                .match(UserNotFoundException::class.java) { _ -> resume() }
+                .match(NullPointerException::class.java) { _ -> restart() }
+                .matchAny { _ -> escalate() }
                 .build())
     }
 

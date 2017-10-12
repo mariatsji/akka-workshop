@@ -46,8 +46,8 @@ class VettingActor(private val userActor: ActorRef, private val fraudWordActor: 
                         examineWordsResult = m
                     }
                 }
-                .match(TimeoutVetting::class.java) { m -> sendVerdictAndTerminateSelf(VerdictType.PENDING, zender) }
-                .match(Terminated::class.java) { m -> sendVerdictAndTerminateSelf(VerdictType.PENDING, zender) }
+                .match(TimeoutVetting::class.java) { _ -> sendVerdictAndTerminateSelf(VerdictType.PENDING, zender) }
+                .match(Terminated::class.java) { _ -> sendVerdictAndTerminateSelf(VerdictType.PENDING, zender) }
                 .build()
     }
 

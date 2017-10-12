@@ -43,7 +43,7 @@ class HttpRoutes(private val vettingActor: ActorRef, private val cache: VerdictC
                 entity(Jackson.unmarshaller(Ad::class.java)
                 ) { ad ->
                     cache[ad]
-                            .map { a -> verdict() }
+                            .map { _ -> verdict() }
                             .getOrElse {
                                 completeOrRecoverWith(
                                         { doVetting(ad) },
