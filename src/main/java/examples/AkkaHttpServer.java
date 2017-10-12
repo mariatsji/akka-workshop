@@ -1,4 +1,4 @@
-package workshop.part4.example;
+package examples;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -26,7 +26,7 @@ import javaslang.control.Option;
 import static akka.http.javadsl.server.PathMatchers.longSegment;
 
 
-public class ExampleHttp extends AllDirectives {
+public class AkkaHttpServer extends AllDirectives {
 
     public static final String HOST_BINDING = "localhost";
     public static final int PORT = 8080;
@@ -38,7 +38,7 @@ public class ExampleHttp extends AllDirectives {
         final Http http = Http.get(system);
         final ActorMaterializer materializer = ActorMaterializer.create(system);
 
-        ExampleHttp app = new ExampleHttp();
+        AkkaHttpServer app = new AkkaHttpServer();
 
         Flow<HttpRequest, HttpResponse, NotUsed> flow = app.createRoute().flow(system, materializer);
 
@@ -114,14 +114,11 @@ public class ExampleHttp extends AllDirectives {
     }
 
     private static class Order {
-
         final List<Item> items;
-
         @JsonCreator
         Order(@JsonProperty("items") List<Item> items) {
             this.items = items;
         }
-
         public List<Item> getItems() {
             return items;
         }
