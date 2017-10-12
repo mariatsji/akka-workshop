@@ -102,9 +102,8 @@ class VettingActorTest : AkkaTest() {
     fun reportsNumVettedAdsEveryConfiguredInterval() {
         createVettingActor(sender.ref(), Duration.create(1, TimeUnit.MILLISECONDS))
 
-        assertThat(sender.expectMsgClass(Duration.Zero(), NumVettedAds::class.java).numVettedAds, equalTo(0))
-        assertThat(sender.expectMsgClass(Duration.Zero(), NumVettedAds::class.java).numVettedAds, equalTo(0))
-        assertThat(sender.expectMsgClass(Duration.Zero(), NumVettedAds::class.java).numVettedAds, equalTo(0))
+        assertThat(sender.expectMsgClass(Duration.create(100, TimeUnit.MILLISECONDS), NumVettedAds::class.java).numVettedAds, equalTo(0))
+        assertThat(sender.expectMsgClass(Duration.create(100, TimeUnit.MILLISECONDS), NumVettedAds::class.java).numVettedAds, equalTo(0))
     }
 
     @Test
