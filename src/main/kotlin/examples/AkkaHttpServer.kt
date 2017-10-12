@@ -1,29 +1,21 @@
 package examples
 
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.CompletionStage
-
 import akka.Done
-import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.http.javadsl.ConnectHttp
 import akka.http.javadsl.Http
-import akka.http.javadsl.ServerBinding
 import akka.http.javadsl.marshallers.jackson.Jackson
-import akka.http.javadsl.model.HttpRequest
-import akka.http.javadsl.model.HttpResponse
 import akka.http.javadsl.model.StatusCodes
 import akka.http.javadsl.server.AllDirectives
+import akka.http.javadsl.server.PathMatchers.longSegment
 import akka.http.javadsl.server.Route
-import akka.http.javadsl.server.directives.RouteAdapter
 import akka.stream.ActorMaterializer
-import akka.stream.javadsl.Flow
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import javaslang.collection.List
 import javaslang.control.Option
-
-import akka.http.javadsl.server.PathMatchers.longSegment
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CompletionStage
 
 
 class AkkaHttpServer : AllDirectives() {
@@ -78,7 +70,7 @@ class AkkaHttpServer : AllDirectives() {
         val HOST_BINDING = "localhost"
         val PORT = 8080
 
-        fun main(args: Array<String>) {
+        @JvmStatic public fun main(args: Array<String>) {
             // boot up server using the route as defined below
             val system = ActorSystem.create("routes")
 
@@ -95,15 +87,11 @@ class AkkaHttpServer : AllDirectives() {
             System.out.println(String.format("Server online at http://%s:%d/", HOST_BINDING, PORT))
 
             sleepForSeconds(30)
-
-            binding
-                    .thenCompose(???({ ServerBinding.unbind() }))
-            .thenAccept { unbound -> system.terminate() }
         }
 
         private fun sleepForSeconds(seconds: Int) {
             try {
-                Thread.sleep(seconds * 1000)
+                Thread.sleep(seconds * 1000L)
             } catch (i: Exception) {
             }
 

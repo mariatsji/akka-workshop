@@ -12,7 +12,7 @@ import org.junit.Test
 import org.mockito.Mockito.mock
 import workshop.common.ad.Ad
 import workshop.part1.AkkaTest
-import workshop.part1.Verdict
+import workshop.part1.VerdictType
 import workshop.part2.supervisor.UserNotFoundException
 import workshop.part2.supervisor.VettingActorFactory
 import workshop.part2.supervisor.VettingSupervisor
@@ -45,9 +45,9 @@ class VettingSupervisorTest : AkkaTest() {
         createVettingSupervisor(vettingActorFactory).tell(ad, sender.ref())
 
         vettingActor.expectMsgClass(Ad::class.java)
-        vettingActor.reply(Verdict.GOOD)
+        vettingActor.reply(VerdictType.GOOD)
 
-        assertThat(sender.expectMsgClass(Verdict::class.java), equalTo(Verdict.GOOD))
+        assertThat(sender.expectMsgClass(VerdictType::class.java), equalTo(VerdictType.GOOD))
     }
 
     @Test

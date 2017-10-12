@@ -34,18 +34,18 @@ class VettingActor(private val userService: UserService,
         else -> unhandled(msg)
     }
 
-    private fun performVetting(ad: Ad): Verdict {
+    private fun performVetting(ad: Ad): VerdictType {
         val record = userService.vettUser(ad.userId)
         val fraudWords = fraudWordService.examineWords(ad.toAdWords())
 
         return toVerdictStatus(record, fraudWords)
     }
 
-    private fun toVerdictStatus(record: UserCriminalRecord, fraudWords: List<FraudWord>): Verdict {
+    private fun toVerdictStatus(record: UserCriminalRecord, fraudWords: List<FraudWord>): VerdictType {
         return if (record == UserCriminalRecord.GOOD && fraudWords.isEmpty()) {
-            Verdict.GOOD
+            VerdictType.GOOD
         } else {
-            Verdict.BAD
+            VerdictType.BAD
         }
     }
 

@@ -14,7 +14,7 @@ import workshop.common.ad.Ad
 import workshop.common.fraudwordsservice.FraudWord
 import workshop.common.userservice.UserCriminalRecord
 import workshop.part1.AkkaTest
-import workshop.part1.Verdict
+import workshop.part1.VerdictType
 import workshop.part2.FraudWordActor
 import workshop.part2.FraudWordActor.ExamineWordsResult
 import workshop.part2.UserActor.CheckUser
@@ -36,9 +36,9 @@ class VettingActorTest : AkkaTest() {
         fraudWordActor.expectMsgClass(FraudWordActor.ExamineWords::class.java)
         fraudWordActor.reply(ExamineWordsResult(emptyList()))
 
-        val verdict = sender.expectMsgClass(Verdict::class.java)
+        val verdict = sender.expectMsgClass(VerdictType::class.java)
 
-        assertThat(verdict, equalTo(Verdict.GOOD))
+        assertThat(verdict, equalTo(VerdictType.GOOD))
     }
 
     @Test
@@ -51,9 +51,9 @@ class VettingActorTest : AkkaTest() {
         fraudWordActor.expectMsgClass(FraudWordActor.ExamineWords::class.java)
         fraudWordActor.reply(ExamineWordsResult(listOf(FraudWord("westernunion"))))
 
-        val verdict = sender.expectMsgClass(Verdict::class.java)
+        val verdict = sender.expectMsgClass(VerdictType::class.java)
 
-        assertThat(verdict, equalTo(Verdict.BAD))
+        assertThat(verdict, equalTo(VerdictType.BAD))
     }
 
     @Test
@@ -66,9 +66,9 @@ class VettingActorTest : AkkaTest() {
         fraudWordActor.expectMsgClass(FraudWordActor.ExamineWords::class.java)
         fraudWordActor.reply(ExamineWordsResult(emptyList()))
 
-        val verdict = sender.expectMsgClass(Verdict::class.java)
+        val verdict = sender.expectMsgClass(VerdictType::class.java)
 
-        assertThat(verdict, equalTo(Verdict.BAD))
+        assertThat(verdict, equalTo(VerdictType.BAD))
     }
 
     @Test
@@ -80,7 +80,7 @@ class VettingActorTest : AkkaTest() {
         schedule(Duration.create(100, TimeUnit.MILLISECONDS), vettingActor, CheckUserResult(UserCriminalRecord.GOOD))
         schedule(Duration.create(100, TimeUnit.MILLISECONDS), vettingActor, ExamineWordsResult(emptyList()))
 
-        assertThat(sender.expectMsgClass(Verdict::class.java), equalTo(Verdict.PENDING))
+        assertThat(sender.expectMsgClass(VerdictType::class.java), equalTo(VerdictType.PENDING))
     }
 
     @Test
@@ -93,7 +93,7 @@ class VettingActorTest : AkkaTest() {
         sender.send(vettingActor, createAd())
         userActor.send(userActor.ref(), PoisonPill.getInstance())
 
-        assertThat(sender.expectMsgClass(Verdict::class.java), equalTo(Verdict.PENDING))
+        assertThat(sender.expectMsgClass(VerdictType::class.java), equalTo(VerdictType.PENDING))
     }
 
     @Test
@@ -108,7 +108,7 @@ class VettingActorTest : AkkaTest() {
         fraudWordActor.expectMsgClass(FraudWordActor.ExamineWords::class.java)
         fraudWordActor.reply(ExamineWordsResult(emptyList()))
 
-        sender.expectMsgClass(Verdict::class.java)
+        sender.expectMsgClass(VerdictType::class.java)
         sender.expectMsgClass(Terminated::class.java)
     }
 
@@ -124,7 +124,7 @@ class VettingActorTest : AkkaTest() {
         fraudWordActor.expectMsgClass(FraudWordActor.ExamineWords::class.java)
         fraudWordActor.reply(ExamineWordsResult(listOf(FraudWord("westernunion"))))
 
-        sender.expectMsgClass(Verdict::class.java)
+        sender.expectMsgClass(VerdictType::class.java)
         sender.expectMsgClass(Terminated::class.java)
     }
 
@@ -137,7 +137,7 @@ class VettingActorTest : AkkaTest() {
         schedule(Duration.create(100, TimeUnit.MILLISECONDS), vettingActor, CheckUserResult(UserCriminalRecord.GOOD))
         schedule(Duration.create(100, TimeUnit.MILLISECONDS), vettingActor, ExamineWordsResult(emptyList()))
 
-        sender.expectMsgClass(Verdict::class.java)
+        sender.expectMsgClass(VerdictType::class.java)
         sender.expectMsgClass(Terminated::class.java)
     }
 
@@ -151,7 +151,7 @@ class VettingActorTest : AkkaTest() {
 
         userActor.send(userActor.ref(), PoisonPill.getInstance())
 
-        sender.expectMsgClass(Verdict::class.java)
+        sender.expectMsgClass(VerdictType::class.java)
         sender.expectMsgClass(Terminated::class.java)
     }
 

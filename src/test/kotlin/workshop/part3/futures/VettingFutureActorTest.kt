@@ -12,7 +12,7 @@ import workshop.common.ad.Ad
 import workshop.common.fraudwordsservice.FraudWord
 import workshop.common.userservice.UserCriminalRecord
 import workshop.part1.AkkaTest
-import workshop.part1.Verdict
+import workshop.part1.VerdictType
 import workshop.part2.FraudWordActor
 import workshop.part2.FraudWordActor.ExamineWordsResult
 import workshop.part2.UserActor.CheckUser
@@ -35,9 +35,9 @@ class VettingFutureActorTest : AkkaTest() {
         fraudWordActor.expectMsgClass(FraudWordActor.ExamineWords::class.java)
         fraudWordActor.reply(ExamineWordsResult(emptyList()))
 
-        val verdict = sender.expectMsgClass(Verdict::class.java)
+        val verdict = sender.expectMsgClass(VerdictType::class.java)
 
-        assertThat(verdict, equalTo(Verdict.GOOD))
+        assertThat(verdict, equalTo(VerdictType.GOOD))
     }
 
     @Test
@@ -50,9 +50,9 @@ class VettingFutureActorTest : AkkaTest() {
         fraudWordActor.expectMsgClass(FraudWordActor.ExamineWords::class.java)
         fraudWordActor.reply(ExamineWordsResult(listOf(FraudWord("westernunion"))))
 
-        val verdict = sender.expectMsgClass(Verdict::class.java)
+        val verdict = sender.expectMsgClass(VerdictType::class.java)
 
-        assertThat(verdict, equalTo(Verdict.BAD))
+        assertThat(verdict, equalTo(VerdictType.BAD))
     }
 
     @Test
@@ -65,9 +65,9 @@ class VettingFutureActorTest : AkkaTest() {
         fraudWordActor.expectMsgClass(FraudWordActor.ExamineWords::class.java)
         fraudWordActor.reply(ExamineWordsResult(emptyList()))
 
-        val verdict = sender.expectMsgClass(Verdict::class.java)
+        val verdict = sender.expectMsgClass(VerdictType::class.java)
 
-        assertThat(verdict, equalTo(Verdict.BAD))
+        assertThat(verdict, equalTo(VerdictType.BAD))
     }
 
     @Test
@@ -80,7 +80,7 @@ class VettingFutureActorTest : AkkaTest() {
         schedule(Duration.create(500, TimeUnit.MILLISECONDS), vettingActor, CheckUserResult(UserCriminalRecord.GOOD))
         schedule(Duration.create(500, TimeUnit.MILLISECONDS), vettingActor, ExamineWordsResult(emptyList()))
 
-        assertThat(sender.expectMsgClass(Verdict::class.java), equalTo(Verdict.PENDING))
+        assertThat(sender.expectMsgClass(VerdictType::class.java), equalTo(VerdictType.PENDING))
     }
 
     private fun createAd(): Ad {

@@ -45,9 +45,9 @@ class VettingActorTest : AkkaTest() {
 
         val ad = createAd()
         createVettingActor().tell(ad, sender.ref())
-        val verdict = sender.expectMsgClass(Verdict::class.java)
+        val verdict = sender.expectMsgClass(VerdictType::class.java)
 
-        assertThat(verdict, equalTo(Verdict.GOOD))
+        assertThat(verdict, equalTo(VerdictType.GOOD))
     }
 
     @Test
@@ -59,9 +59,9 @@ class VettingActorTest : AkkaTest() {
                 .thenReturn(listOf(FraudWord("nigeria")))
 
         createVettingActor().tell(createAd(), sender.ref())
-        val verdict = sender.expectMsgClass(Verdict::class.java)
+        val verdict = sender.expectMsgClass(VerdictType::class.java)
 
-        assertThat(verdict, equalTo(Verdict.BAD))
+        assertThat(verdict, equalTo(VerdictType.BAD))
     }
 
     @Test
@@ -74,9 +74,9 @@ class VettingActorTest : AkkaTest() {
 
         val ad = createAd()
         createVettingActor().tell(ad, sender.ref())
-        val verdict = sender.expectMsgClass(Verdict::class.java)
+        val verdict = sender.expectMsgClass(VerdictType::class.java)
 
-        assertThat(verdict, equalTo(Verdict.BAD))
+        assertThat(verdict, equalTo(VerdictType.BAD))
     }
 
     @Test

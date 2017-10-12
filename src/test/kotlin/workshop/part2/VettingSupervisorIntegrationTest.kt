@@ -11,7 +11,7 @@ import org.junit.Test
 import workshop.common.ad.Ad
 import workshop.common.userservice.UserCriminalRecord
 import workshop.part1.AkkaTest
-import workshop.part1.Verdict
+import workshop.part1.VerdictType
 import workshop.part2.supervisor.VettingActorFactory
 import workshop.part2.supervisor.VettingSupervisor
 
@@ -43,8 +43,8 @@ class VettingSupervisorIntegrationTest : AkkaTest() {
             vettingActor.tell(createAd(2), testActor())
 
             within<Any>(JavaTestKit.duration("3 seconds")) {
-                assertThat(expectMsgClass(Verdict::class.java), equalTo((Verdict.GOOD)))
-                assertThat(expectMsgClass(Verdict::class.java), equalTo((Verdict.GOOD)))
+                assertThat(expectMsgClass(VerdictType::class.java), equalTo((VerdictType.GOOD)))
+                assertThat(expectMsgClass(VerdictType::class.java), equalTo((VerdictType.GOOD)))
             }
         }}
     }

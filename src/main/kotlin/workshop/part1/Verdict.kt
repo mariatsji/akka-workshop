@@ -1,7 +1,21 @@
 package workshop.part1
 
-enum class Verdict {
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
 
-    GOOD, BAD, PENDING
+enum class VerdictType {
+    GOOD, BAD, PENDING, FAILURE
+}
+
+class Verdict @JsonCreator
+constructor(@param:JsonProperty("id") val id: String,
+            @JsonProperty("value") value: VerdictType) {
+    val value: String
+
+    init {
+        this.value = value.name
+    }
+
 
 }
+
