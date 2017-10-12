@@ -79,7 +79,6 @@ class HttpRoutes(private val vettingActor: ActorRef, private val cache: VerdictC
 
 
         return vettingVerdict.whenCompleteAsync { vt: VerdictType, error: Throwable? ->
-            println("triggered future complete async!")
             if (error != null) {
                 vettingVerdict.thenRunAsync { Verdict(verdictId, VerdictType.PENDING) }
             } else {
