@@ -12,7 +12,6 @@ public class VettingActor extends AbstractActor {
     private final FraudWordService fraudWordService;
     private final ActorRef numVettedAdsActor;
     private final FiniteDuration numVettedAdsInterval;
-    private Integer numVettedAds = 0;
 
     public VettingActor(UserService userService, FraudWordService fraudWordService, ActorRef numVettedAdsActor, FiniteDuration numVettedAdsInterval) {
         this.userService = userService;
