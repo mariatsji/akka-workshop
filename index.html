@@ -647,22 +647,58 @@ object ComputeRouterExample extends App {
 
     <slide>
         <hgroup>
-            <h2>Part 3 - Exercises</h2>
+            <h2>Akka HTTP</h2>
         </hgroup>
         <article class="large">
             <ul>
-                <li>Implement SuperComputeActor.java|kt</li>
-                <li>Make tests in SuperComputerActorTest.java|kt green</li>
+                <li>Lightweight toolkit (not really a Framework)</li>
+                <li>Server- and client-side HTTP stack on top of akka-actor and akka-stream</li>
+                <li>The high-level, routing API</li>
+                <li>Low-level HTTPRequest/HTTPResponse API</li>
+            </ul>
+        </article>
+    </slide>
+
+    <slide>
+        <hgroup>
+            <h2>Akka HTTP example</h2>
+        </hgroup>
+        <article>
+            <pre class="prettyprint">object WebServer {
+  def main(args: Array[String]) {
+
+    implicit val system = ActorSystem("my-system")
+    implicit val materializer = ActorMaterializer()
+
+    val route =
+      path("hello") {
+        get {
+          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "&lt;h1&gt;Say hello to akka-http&lt;&#47;h1&gt;"))
+        }
+      }
+
+    val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
+  }
+}</pre>
+        </article>
+        <span class="example">AkkaHttpServer.java|kt</span>
+    </slide>
+
+    <slide>
+        <hgroup>
+            <h2>Part 4 - Exercises</h2>
+        </hgroup>
+        <article class="large">
+            <ul>
+                <li>Create a HTTP server front for the vetting of ads</li>
+                <li>Make HttpRoutesTest green</li>
             </ul>
 
             <br>
             <ul>
-                <li>Play around with:
+                <li>Docs:
                     <ul>
-                        <li>Create multiple actors (one for each unit of work)</li>
-
-                        <li><a style="margin-left: 1em" href="http://doc.akka.io/docs/akka/2.5.6/java/routing.html">Use a router</a></li>
-                        <li><a style="margin-left: 1em" href="http://doc.akka.io/docs/akka/2.5.6/java/futures.html">Use futures</a></li>
+                        <li><a style="margin-left: 1em" href="https://doc.akka.io/docs/akka-http/10.0.10/java/http/">Akka HTTP</a></li>
                     </ul>
                 </li>
             </ul>
