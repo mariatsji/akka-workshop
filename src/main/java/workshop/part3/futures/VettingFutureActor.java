@@ -30,13 +30,15 @@ public class VettingFutureActor extends AbstractActor {
             .build();
     }
 
+    // handy converter from scala Future to javas CompletionStage
+    @SuppressWarnings("unchecked")
+    private <T> CompletionStage<T> ask(ActorRef receiver, Object msg) {
+        return (CompletionStage<T>) FutureConverters.toJava(Patterns.ask(receiver, msg, new Timeout(timeoutVetting)));
+    }
+
     // utility for passing a VerdictType wrapped in javas CompletionStage to a receiver
     private void pipeTo(ActorRef receiver, CompletionStage<VerdictType> verdict) {
         Patterns.pipe(FutureConverters.toScala(verdict), context().system().dispatcher()).to(receiver);
     }
 
-    // handy converter from scala Future to javas CompletionStage
-    private <T> CompletionStage<T> ask(ActorRef receiver, Object msg) {
-        return (CompletionStage<T>) FutureConverters.toJava(Patterns.ask(receiver, msg, new Timeout(timeoutVetting)));
-    }
 }
