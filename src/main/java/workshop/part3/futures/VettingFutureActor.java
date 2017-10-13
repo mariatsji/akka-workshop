@@ -35,7 +35,7 @@ public class VettingFutureActor extends AbstractActor {
         Patterns.pipe(FutureConverters.toScala(verdict), context().system().dispatcher()).to(receiver);
     }
 
-    // hany converter from scala Future to javas CompletionStage
+    // handy converter from scala Future to javas CompletionStage
     private <T> CompletionStage<T> ask(ActorRef receiver, Object msg) {
         return (CompletionStage<T>) FutureConverters.toJava(Patterns.ask(receiver, msg, new Timeout(timeoutVetting)));
     }
