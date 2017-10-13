@@ -37,7 +37,7 @@ import static org.mockito.Mockito.when;
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class VettingSubActorTest extends AkkaTest {
+public class VettingActorTest extends AkkaTest {
 
     @Mock
     UserService userService;
