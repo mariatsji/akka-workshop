@@ -1,4 +1,4 @@
-package workshop.part2
+package workshop.part2.supervisor
 
 import akka.actor.Props
 import akka.actor.SupervisorStrategy
@@ -14,9 +14,6 @@ import scala.concurrent.duration.Duration
 import workshop.common.ad.Ad
 import workshop.part1.AkkaTest
 import workshop.part1.VerdictType
-import workshop.part2.supervisor.UserNotFoundException
-import workshop.part2.supervisor.VettingActorFactory
-import workshop.part2.supervisor.VettingSupervisor
 
 
 class VettingSupervisorTest : AkkaTest() {

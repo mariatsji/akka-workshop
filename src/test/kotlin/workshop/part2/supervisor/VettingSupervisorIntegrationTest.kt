@@ -1,4 +1,4 @@
-package workshop.part2
+package workshop.part2.supervisor
 
 import akka.actor.ActorRef
 import akka.actor.Props
@@ -12,8 +12,8 @@ import workshop.common.ad.Ad
 import workshop.common.userservice.UserCriminalRecord
 import workshop.part1.AkkaTest
 import workshop.part1.VerdictType
-import workshop.part2.supervisor.VettingActorFactory
-import workshop.part2.supervisor.VettingSupervisor
+import workshop.part2.FraudWordActor
+import workshop.part2.UserActor
 
 class VettingSupervisorIntegrationTest : AkkaTest() {
 
